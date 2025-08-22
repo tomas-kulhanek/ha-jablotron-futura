@@ -1,0 +1,24 @@
+{
+  "title": "Jablotron Futura",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Futura (Modbus TCP)",
+        "description": "Enter IP and optionally the port and Unit ID (slave).",
+        "data": {
+          "host": "Host/IP",
+          "port": "Port",
+          "unit_id": "Unit ID (Slave)"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "description": "No options yet."
+      }
+    }
+  }
+}

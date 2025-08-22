@@ -1,0 +1,22 @@
+set_away:
+  name: Nastavit dovolenou
+  description: Nastaví režim Dovolená zápisem do registrů 6..9 (UTC epoch).
+  fields:
+    begin:
+      name: Začátek (UTC)
+      description: Datum a čas začátku (pokud není vyplněno, použije se aktuální čas).
+      example: "2025-08-22T12:00:00+00:00"
+      required: false
+      selector:
+        datetime:
+    end:
+      name: Konec (UTC)
+      description: Datum a čas konce (pokud není vyplněno, použije se +7 dní od začátku).
+      example: "2025-08-29T12:00:00+00:00"
+      required: false
+      selector:
+        datetime:
+
+clear_away:
+  name: Zrušit dovolenou
+  description: Zapíše nulu do registrů 6..9.
