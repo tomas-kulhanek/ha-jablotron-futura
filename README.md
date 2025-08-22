@@ -1,7 +1,7 @@
 
 # Jablotron Futura – custom integration (Modbus)
 
-**Version:** 0.1.2 — 2025-08-22
+**Version:** 0.1.3 — 2025-08-22
 
 This custom integration exposes the same functionality as your YAML package,
 but in a tidy UI-based integration with entities and services.
