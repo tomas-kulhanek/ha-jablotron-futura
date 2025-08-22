@@ -41,8 +41,18 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
     async def _ensure_client(self) -> AsyncModbusTcpClient:
         if self.client is None:
-            self.client = AsyncModbusTcpClient(self.host, port=self.port)
-            await self.client.connect()
+            # timeout jako v původním YAML (5 s)
+            self.client = AsyncModbusTcpClient(self.host, port=self.port, timeout=5)
+            ok = await self.client.connect()
+            if not ok or not getattr(self.client, "connected", False):
+                # uvolni klienta, ať to příště zkusíme čistě
+                try:
+                    await self.client.close()
+                except Exception:
+                    pass
+                self.client = None
+                from homeassistant.helpers.update_coordinator import UpdateFailed
+                raise UpdateFailed(f"TCP connect failed to {self.host}:{self.port}")
         return self.client
 
     async def async_close(self) -> None:
