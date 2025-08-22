@@ -11,10 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
 
-from .const import (
-    DOMAIN, CONF_UNIT_ID, DEFAULT_UNIT_ID, INP_START_MAIN, INP_LEN_MAIN, INP_START_ALFA, INP_LEN_ALFA,
-    HOLD_START_MAIN, HOLD_LEN_MAIN, KEYS
-)
+from .const import DOMAIN, CONF_UNIT_ID, DEFAULT_UNIT_ID, KEYS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,17 +38,15 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
     async def _ensure_client(self) -> AsyncModbusTcpClient:
         if self.client is None:
-            # timeout jako v původním YAML (5 s)
+            # timeout stejně jako v původním YAML (5 s)
             self.client = AsyncModbusTcpClient(self.host, port=self.port, timeout=5)
             ok = await self.client.connect()
             if not ok or not getattr(self.client, "connected", False):
-                # uvolni klienta, ať to příště zkusíme čistě
                 try:
                     await self.client.close()
                 except Exception:
                     pass
                 self.client = None
-                from homeassistant.helpers.update_coordinator import UpdateFailed
                 raise UpdateFailed(f"TCP connect failed to {self.host}:{self.port}")
         return self.client
 
@@ -59,7 +54,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         if self.client:
             try:
                 await self.client.close()
-            except Exception:  # noqa: BLE001
+            except Exception:
                 pass
             self.client = None
 
@@ -94,31 +89,51 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         return block[idx]
 
     async def _async_update_data(self) -> Dict[str, Any]:
-        """Read all needed registers and parse into a dict."""
-        inp_main = await self._read_block(INP_START_MAIN, INP_LEN_MAIN, input_regs=True)
-        inp_alfa = await self._read_block(INP_START_ALFA, INP_LEN_ALFA, input_regs=True)
-        hold_main = await self._read_block(HOLD_START_MAIN, HOLD_LEN_MAIN, input_regs=False)
+        """Read all needed registers and parse into a dict.
+
+        Čteme po segmentech, protože velký rozsah 14..44 vrací ILLEGAL DATA ADDRESS.
+        """
+        # Input segments
+        inp_14_21 = await self._read_block(14, 8, input_regs=True)   # 14..21 (variant + bity 16..21)
+        inp_30_33 = await self._read_block(30, 4, input_regs=True)   # 30..33 (teploty)
+        inp_34_38 = await self._read_block(34, 5, input_regs=True)   # 34..38 (vlhkosti + NTC)
+        inp_40_41 = await self._read_block(40, 2, input_regs=True)   # 40..41 (filtr, příkon)
+        inp_44    = await self._read_block(44, 1, input_regs=True)   # 44 (průtok)
+        inp_alfa  = await self._read_block(162, 3, input_regs=True)  # ALFA 162..164
+
+        # Holding area (0..17 je u Futury souvislý rozsah)
+        hold_main = await self._read_block(0, 18, input_regs=False)
 
         data: Dict[str, Any] = {}
 
-        # Input area
-        data["variant_raw"] = self._u16_from(inp_main, INP_START_MAIN, KEYS["variant_raw"])
-        data["modes_bits_raw"] = self._u32_from(inp_main, INP_START_MAIN, KEYS["modes_bits_raw"])
-        data["errors_bits_raw"] = self._u32_from(inp_main, INP_START_MAIN, KEYS["errors_bits_raw"])
-        data["warnings_bits_raw"] = self._u32_from(inp_main, INP_START_MAIN, KEYS["warnings_bits_raw"])
+        # Input area – bity a variant
+        data["variant_raw"]      = self._u16_from(inp_14_21, 14, KEYS["variant_raw"])
+        data["modes_bits_raw"]   = self._u32_from(inp_14_21, 14, KEYS["modes_bits_raw"])
+        data["errors_bits_raw"]  = self._u32_from(inp_14_21, 14, KEYS["errors_bits_raw"])
+        data["warnings_bits_raw"]= self._u32_from(inp_14_21, 14, KEYS["warnings_bits_raw"])
 
-        for k in ("temp_outdoor","temp_supply","temp_extract","temp_exhaust","temp_outdoor_ntc"):
-            data[k] = self._i16_from(inp_main, INP_START_MAIN, KEYS[k]) / 10.0
-        for k in ("humi_outdoor","humi_supply","humi_extract","humi_exhaust"):
-            data[k] = self._i16_from(inp_main, INP_START_MAIN, KEYS[k]) / 10.0
+        # Teploty
+        data["temp_outdoor"]     = self._i16_from(inp_30_33, 30, KEYS["temp_outdoor"]) / 10.0
+        data["temp_supply"]      = self._i16_from(inp_30_33, 30, KEYS["temp_supply"]) / 10.0
+        data["temp_extract"]     = self._i16_from(inp_30_33, 30, KEYS["temp_extract"]) / 10.0
+        data["temp_exhaust"]     = self._i16_from(inp_30_33, 30, KEYS["temp_exhaust"]) / 10.0
+        data["temp_outdoor_ntc"] = self._i16_from(inp_34_38, 34, KEYS["temp_outdoor_ntc"]) / 10.0
 
-        data["filter_wear"] = self._u16_from(inp_main, INP_START_MAIN, KEYS["filter_wear"])
-        data["power"] = self._u16_from(inp_main, INP_START_MAIN, KEYS["power"])
-        data["air_flow"] = self._u16_from(inp_main, INP_START_MAIN, KEYS["air_flow"])
+        # Vlhkosti
+        data["humi_outdoor"]     = self._i16_from(inp_34_38, 34, KEYS["humi_outdoor"]) / 10.0
+        data["humi_supply"]      = self._i16_from(inp_34_38, 34, KEYS["humi_supply"]) / 10.0
+        data["humi_extract"]     = self._i16_from(inp_34_38, 34, KEYS["humi_extract"]) / 10.0
+        data["humi_exhaust"]     = self._i16_from(inp_34_38, 34, KEYS["humi_exhaust"]) / 10.0
 
-        data["alfa_co2_1"] = self._u16_from(inp_alfa, INP_START_ALFA, KEYS["alfa_co2_1"])
-        data["alfa_temp_1"] = self._i16_from(inp_alfa, INP_START_ALFA, KEYS["alfa_temp_1"]) / 10.0
-        data["alfa_humi_1"] = self._u16_from(inp_alfa, INP_START_ALFA, KEYS["alfa_humi_1"]) / 10.0
+        # Výkony / průtok
+        data["filter_wear"]      = self._u16_from(inp_40_41, 40, KEYS["filter_wear"])
+        data["power"]            = self._u16_from(inp_40_41, 40, KEYS["power"])
+        data["air_flow"]         = self._u16_from(inp_44,    44, KEYS["air_flow"])
+
+        # ALFA
+        data["alfa_co2_1"]       = self._u16_from(inp_alfa, 162, KEYS["alfa_co2_1"])
+        data["alfa_temp_1"]      = self._i16_from(inp_alfa, 162, KEYS["alfa_temp_1"]) / 10.0
+        data["alfa_humi_1"]      = self._u16_from(inp_alfa, 162, KEYS["alfa_humi_1"]) / 10.0
 
         # Holding area
         for k in (
@@ -126,13 +141,13 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
             "night_remaining_s","party_remaining_s","time_program_raw","antiradon_raw",
             "bypass_enable_raw","heating_enable_raw","cooling_enable_raw","comfort_enable_raw",
         ):
-            data[k] = self._u16_from(hold_main, HOLD_START_MAIN, KEYS[k])
+            data[k] = self._u16_from(hold_main, 0, KEYS[k])
 
-        data["away_begin_ts"] = self._u32_from(hold_main, HOLD_START_MAIN, KEYS["away_begin_ts"])
-        data["away_end_ts"] = self._u32_from(hold_main, HOLD_START_MAIN, KEYS["away_end_ts"])
+        data["away_begin_ts"] = self._u32_from(hold_main, 0, KEYS["away_begin_ts"])
+        data["away_end_ts"]   = self._u32_from(hold_main, 0, KEYS["away_end_ts"])
 
-        data["temp_set_raw"] = self._i16_from(hold_main, HOLD_START_MAIN, KEYS["temp_set_raw"]) / 10.0
-        data["humi_set_raw"] = self._i16_from(hold_main, HOLD_START_MAIN, KEYS["humi_set_raw"]) / 10.0
+        data["temp_set_raw"] = self._i16_from(hold_main, 0, KEYS["temp_set_raw"]) / 10.0
+        data["humi_set_raw"] = self._i16_from(hold_main, 0, KEYS["humi_set_raw"]) / 10.0
 
         # Derived helpers
         v = data.get("mode_raw", 0)
@@ -165,7 +180,6 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         client = await self._ensure_client()
         hi = (value >> 16) & 0xFFFF
         lo = value & 0xFFFF
-        # Write multiple registers
         rr = await client.write_registers(address, values=[hi, lo], slave=self.unit)
         if rr.isError():
             raise UpdateFailed(f"Write failed @ {address} (u32): {rr}")
@@ -173,7 +187,6 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     async def async_set_away(self, begin: dt.datetime | None, end: dt.datetime | None) -> None:
         now_ts = int(dt.datetime.utcnow().timestamp())
         b_ts = int(begin.timestamp()) if isinstance(begin, dt.datetime) else now_ts
-        # Default: 7 days if end not provided or invalid
         if not isinstance(end, dt.datetime) or int(end.timestamp()) <= b_ts:
             e_ts = b_ts + 7*24*3600
         else:
