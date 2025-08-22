@@ -57,9 +57,9 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         client = await self._ensure_client()
         try:
             if input_regs:
-                rr = await client.read_input_registers(start, count, slave=self.unit)
+                rr = await client.read_input_registers(start, count=count, slave=self.unit)
             else:
-                rr = await client.read_holding_registers(start, count, slave=self.unit)
+                rr = await client.read_holding_registers(start, count=count, slave=self.unit)
         except ModbusException as e:
             raise UpdateFailed(f"Modbus read failed @ {start}/{count}: {e}") from e
         if rr.isError():
@@ -146,7 +146,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
     async def _write_u16(self, address: int, value: int) -> None:
         client = await self._ensure_client()
-        rr = await client.write_register(address, value, slave=self.unit)
+        rr = await client.write_register(address, value=value, slave=self.unit)
         if rr.isError():
             raise UpdateFailed(f"Write failed @ {address}: {rr}")
 
@@ -156,7 +156,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         hi = (value >> 16) & 0xFFFF
         lo = value & 0xFFFF
         # Write multiple registers
-        rr = await client.write_registers(address, [hi, lo], slave=self.unit)
+        rr = await client.write_registers(address, values=[hi, lo], slave=self.unit)
         if rr.isError():
             raise UpdateFailed(f"Write failed @ {address} (u32): {rr}")
 
