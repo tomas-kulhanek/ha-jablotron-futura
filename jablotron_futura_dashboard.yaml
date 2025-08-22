@@ -5,6 +5,65 @@ views:
     icon: mdi:home-fan
     badges: []
     cards:
+      - type: entity-filter
+        title: Aktivní chyby
+        show_empty: false
+        state_filter:
+          - 'on'
+        entities:
+          - binary_sensor.jablotron_futura_any_error
+          - binary_sensor.jablotron_futura_error_sensor_ambient
+          - binary_sensor.jablotron_futura_error_sensor_indoor
+          - binary_sensor.jablotron_futura_error_sensor_fresh
+          - binary_sensor.jablotron_futura_error_sensor_waste
+          - binary_sensor.jablotron_futura_error_fan_supply
+          - binary_sensor.jablotron_futura_error_fan_extract
+          - binary_sensor.jablotron_futura_error_hex_comm
+          - binary_sensor.jablotron_futura_error_hex_damper
+          - binary_sensor.jablotron_futura_error_io_board_comm
+          - binary_sensor.jablotron_futura_error_fan_supply_blocked
+          - binary_sensor.jablotron_futura_error_fan_extract_blocked
+          - binary_sensor.jablotron_futura_error_coolbreeze_comm
+          - binary_sensor.jablotron_futura_error_coolbreeze_outdoor
+      - type: entity-filter
+        title: Aktivní varování
+        show_empty: false
+        state_filter:
+          - 'on'
+        entities:
+          - binary_sensor.jablotron_futura_any_warning
+          - binary_sensor.jablotron_futura_warning_bit_0
+          - binary_sensor.jablotron_futura_warning_bit_1
+          - binary_sensor.jablotron_futura_warning_bit_2
+          - binary_sensor.jablotron_futura_warning_bit_3
+          - binary_sensor.jablotron_futura_warning_bit_4
+          - binary_sensor.jablotron_futura_warning_bit_5
+          - binary_sensor.jablotron_futura_warning_bit_6
+          - binary_sensor.jablotron_futura_warning_bit_7
+          - binary_sensor.jablotron_futura_warning_bit_8
+          - binary_sensor.jablotron_futura_warning_bit_9
+          - binary_sensor.jablotron_futura_warning_bit_10
+          - binary_sensor.jablotron_futura_warning_bit_11
+          - binary_sensor.jablotron_futura_warning_bit_12
+          - binary_sensor.jablotron_futura_warning_bit_13
+          - binary_sensor.jablotron_futura_warning_bit_14
+          - binary_sensor.jablotron_futura_warning_bit_15
+          - binary_sensor.jablotron_futura_warning_bit_16
+          - binary_sensor.jablotron_futura_warning_bit_17
+          - binary_sensor.jablotron_futura_warning_bit_18
+          - binary_sensor.jablotron_futura_warning_bit_19
+          - binary_sensor.jablotron_futura_warning_bit_20
+          - binary_sensor.jablotron_futura_warning_bit_21
+          - binary_sensor.jablotron_futura_warning_bit_22
+          - binary_sensor.jablotron_futura_warning_bit_23
+          - binary_sensor.jablotron_futura_warning_bit_24
+          - binary_sensor.jablotron_futura_warning_bit_25
+          - binary_sensor.jablotron_futura_warning_bit_26
+          - binary_sensor.jablotron_futura_warning_bit_27
+          - binary_sensor.jablotron_futura_warning_bit_28
+          - binary_sensor.jablotron_futura_warning_bit_29
+          - binary_sensor.jablotron_futura_warning_bit_30
+          - binary_sensor.jablotron_futura_warning_bit_31
       - type: entities
         title: Přehled a režimy
         entities:
@@ -169,7 +228,7 @@ views:
               left: 64%
               top: 12%
           - type: state-badge
-            entity: binary_sensor.jablotron_futura_je_nejaka_chyba
+            entity: binary_sensor.jablotron_futura_any_error
             style:
               left: 82%
               top: 12%
@@ -221,62 +280,3 @@ views:
                 entity_id: number.jablotron_futura_cirkulace_minuty
               data:
                 value: 0
-      - type: entity-filter
-        title: Aktivní chyby
-        show_empty: false
-        state_filter:
-          - 'on'
-        entities:
-          - binary_sensor.jablotron_futura_any_error
-          - binary_sensor.jablotron_futura_error_sensor_ambient
-          - binary_sensor.jablotron_futura_error_sensor_indoor
-          - binary_sensor.jablotron_futura_error_sensor_fresh
-          - binary_sensor.jablotron_futura_error_sensor_waste
-          - binary_sensor.jablotron_futura_error_fan_supply
-          - binary_sensor.jablotron_futura_error_fan_extract
-          - binary_sensor.jablotron_futura_error_hex_comm
-          - binary_sensor.jablotron_futura_error_hex_damper
-          - binary_sensor.jablotron_futura_error_io_board_comm
-          - binary_sensor.jablotron_futura_error_fan_supply_blocked
-          - binary_sensor.jablotron_futura_error_fan_extract_blocked
-          - binary_sensor.jablotron_futura_error_coolbreeze_comm
-          - binary_sensor.jablotron_futura_error_coolbreeze_outdoor
-      - type: entity-filter
-        title: Aktivní varování
-        show_empty: false
-        state_filter:
-          - 'on'
-        entities:
-          - binary_sensor.jablotron_futura_any_warning
-          - binary_sensor.jablotron_futura_warning_bit_0
-          - binary_sensor.jablotron_futura_warning_bit_1
-          - binary_sensor.jablotron_futura_warning_bit_2
-          - binary_sensor.jablotron_futura_warning_bit_3
-          - binary_sensor.jablotron_futura_warning_bit_4
-          - binary_sensor.jablotron_futura_warning_bit_5
-          - binary_sensor.jablotron_futura_warning_bit_6
-          - binary_sensor.jablotron_futura_warning_bit_7
-          - binary_sensor.jablotron_futura_warning_bit_8
-          - binary_sensor.jablotron_futura_warning_bit_9
-          - binary_sensor.jablotron_futura_warning_bit_10
-          - binary_sensor.jablotron_futura_warning_bit_11
-          - binary_sensor.jablotron_futura_warning_bit_12
-          - binary_sensor.jablotron_futura_warning_bit_13
-          - binary_sensor.jablotron_futura_warning_bit_14
-          - binary_sensor.jablotron_futura_warning_bit_15
-          - binary_sensor.jablotron_futura_warning_bit_16
-          - binary_sensor.jablotron_futura_warning_bit_17
-          - binary_sensor.jablotron_futura_warning_bit_18
-          - binary_sensor.jablotron_futura_warning_bit_19
-          - binary_sensor.jablotron_futura_warning_bit_20
-          - binary_sensor.jablotron_futura_warning_bit_21
-          - binary_sensor.jablotron_futura_warning_bit_22
-          - binary_sensor.jablotron_futura_warning_bit_23
-          - binary_sensor.jablotron_futura_warning_bit_24
-          - binary_sensor.jablotron_futura_warning_bit_25
-          - binary_sensor.jablotron_futura_warning_bit_26
-          - binary_sensor.jablotron_futura_warning_bit_27
-          - binary_sensor.jablotron_futura_warning_bit_28
-          - binary_sensor.jablotron_futura_warning_bit_29
-          - binary_sensor.jablotron_futura_warning_bit_30
-          - binary_sensor.jablotron_futura_warning_bit_31
