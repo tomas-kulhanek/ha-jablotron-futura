@@ -8,10 +8,13 @@ but in a tidy UI-based integration with entities and services.
 
 ## Install
 
-1. Unzip the archive into your Home Assistant `config/custom_components/jablotron_futura/` folder.
+1. Unzip the archive and copy `custom_components/jablotron_futura` into your Home Assistant `config/custom_components/` folder. (or you can use custom repositories in HACS)
 2. Restart Home Assistant.
 3. Go to *Settings → Devices & Services → Add Integration* and search for **Jablotron Futura**.
 4. Enter the IP (`192.168.23.10`), port (`502`), and unit ID (`1`).
+
+### Yaml Configuration
+If you prefer YAML configuration, you can still use the `jablotron_futura.yaml` file in your `config` directory. This is optional and not required for the integration to work.
 
 ## Entities
 
@@ -37,3 +40,10 @@ but in a tidy UI-based integration with entities and services.
 
 - If entities don't update, make sure Modbus is enabled in your Futura and port 502 is reachable.
 - Check HA logs for entries tagged `jablotron_futura`.
+
+
+## Dashboard
+- Use the provided YAML dashboard to visualize the entities.
+- You can customize the dashboard to fit your needs, but the provided one should give you a good starting point.
+- Example dashboard [YAML](jablotron_futura_dashboard.yaml) is available in the `jablotron_futura_dashboard.yaml` file in the repository.
+![Example Dashboard](docs/dashboard.png)
