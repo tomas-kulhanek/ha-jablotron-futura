@@ -1,0 +1,1293 @@
+modbus:
+  - name: futura
+    type: tcp
+    host: 192.168.23.10
+    port: 502
+    timeout: 5
+
+    sensors:
+      # -------- System / bitfields (Input) --------
+      - name: futura_variant_raw
+        slave: 1
+        address: 14
+        input_type: input
+        data_type: uint16
+        scan_interval: 120
+
+      - name: futura_modes_bits_raw
+        slave: 1
+        address: 16
+        input_type: input
+        data_type: uint32
+        scan_interval: 5
+
+      - name: futura_errors_bits_raw
+        slave: 1
+        address: 18
+        input_type: input
+        data_type: uint32
+        scan_interval: 5
+
+      - name: futura_warnings_bits_raw
+        slave: 1
+        address: 20
+        input_type: input
+        data_type: uint32
+        scan_interval: 5
+
+      # -------- Temperatures (Input, int16 ×0.1 °C) --------
+      - name: futura_temp_outdoor
+        slave: 1
+        address: 30
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_temp_supply
+        slave: 1
+        address: 31
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_temp_extract
+        slave: 1
+        address: 32
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_temp_exhaust
+        slave: 1
+        address: 33
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_temp_outdoor_ntc
+        slave: 1
+        address: 38
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+
+      # -------- Humidity (Input, ×0.1 %) --------
+      - name: futura_humi_outdoor
+        slave: 1
+        address: 34
+        input_type: input
+        data_type: int16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_humi_supply
+        slave: 1
+        address: 35
+        input_type: input
+        data_type: int16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_humi_extract
+        slave: 1
+        address: 36
+        input_type: input
+        data_type: int16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_humi_exhaust
+        slave: 1
+        address: 37
+        input_type: input
+        data_type: int16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      # -------- Performance / flow (Input) --------
+      - name: futura_filter_wear
+        slave: 1
+        address: 40
+        input_type: input
+        data_type: uint16
+        unit_of_measurement: "%"
+        scan_interval: 3600
+
+      - name: futura_power
+        slave: 1
+        address: 41
+        input_type: input
+        data_type: uint16
+        unit_of_measurement: "W"
+
+      - name: futura_air_flow
+        slave: 1
+        address: 44
+        input_type: input
+        data_type: uint16
+        unit_of_measurement: "m3/h"
+
+      # -------- ALFA wall controller [1] (Input) – 162/163/164 --------
+      - name: alfa_co2_1
+        slave: 1
+        address: 162
+        input_type: input
+        data_type: uint16
+        unit_of_measurement: "ppm"
+
+      - name: alfa_temp_1
+        slave: 1
+        address: 163
+        input_type: input
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+        scan_interval: 5
+
+      - name: alfa_humi_1
+        slave: 1
+        address: 164
+        input_type: input
+        data_type: uint16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      # -------- Config / functions (Holding – read) --------
+      - name: futura_mode_raw
+        slave: 1
+        address: 0
+        input_type: holding
+        data_type: uint16
+        scan_interval: 5
+
+      - name: futura_boost_remaining_s
+        slave: 1
+        address: 1
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "s"
+        scan_interval: 5
+
+      - name: futura_circulation_remaining_s
+        slave: 1
+        address: 2
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "s"
+        scan_interval: 5
+
+      - name: futura_overpressure_remaining_s
+        slave: 1
+        address: 3
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "s"
+        scan_interval: 120
+
+      - name: futura_night_remaining_s
+        slave: 1
+        address: 4
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "s"
+        scan_interval: 30
+
+      - name: futura_party_remaining_s
+        slave: 1
+        address: 5
+        input_type: holding
+        data_type: uint16
+        unit_of_measurement: "s"
+        scan_interval: 30
+
+      - name: futura_away_begin_ts
+        slave: 1
+        address: 6
+        input_type: holding
+        data_type: uint32
+        scan_interval: 30
+
+      - name: futura_away_end_ts
+        slave: 1
+        address: 8
+        input_type: holding
+        data_type: uint32
+        scan_interval: 30
+
+      - name: futura_temp_set_raw
+        slave: 1
+        address: 10
+        input_type: holding
+        data_type: int16
+        device_class: temperature
+        unit_of_measurement: "°C"
+        scale: 0.1
+        precision: 1
+        scan_interval: 5
+
+      - name: futura_humi_set_raw
+        slave: 1
+        address: 11
+        input_type: holding
+        data_type: int16
+        device_class: humidity
+        unit_of_measurement: "%"
+        scale: 0.1
+        precision: 1
+
+      - name: futura_time_program_raw
+        slave: 1
+        address: 12
+        input_type: holding
+        data_type: uint16
+        scan_interval: 120
+
+      - name: futura_antiradon_raw
+        slave: 1
+        address: 13
+        input_type: holding
+        data_type: uint16
+        scan_interval: 30
+
+      - name: futura_bypass_enable_raw
+        slave: 1
+        address: 14
+        input_type: holding
+        data_type: uint16
+        scan_interval: 11
+
+      - name: futura_heating_enable_raw
+        slave: 1
+        address: 15
+        input_type: holding
+        data_type: uint16
+        scan_interval: 5
+
+      - name: futura_cooling_enable_raw
+        slave: 1
+        address: 16
+        input_type: holding
+        data_type: uint16
+        scan_interval: 5
+
+      - name: futura_comfort_enable_raw
+        slave: 1
+        address: 17
+        input_type: holding
+        data_type: uint16
+        scan_interval: 10
+
+# ---------- Helpers ----------
+input_number:
+  futura_boost_minutes:
+    name: "Boost – minuty"
+    min: 0
+    max: 120
+    step: 15
+    unit_of_measurement: "min"
+    initial: 60
+
+  futura_circulation_minutes:
+    name: "Cirkulace – minuty"
+    min: 0
+    max: 120
+    step: 1
+    unit_of_measurement: "min"
+
+  futura_night_hours:
+    name: "Noc – hodiny"
+    min: 0
+    max: 10
+    step: 1
+    unit_of_measurement: "h"
+
+  futura_party_hours:
+    name: "Party – hodiny"
+    min: 0
+    max: 8
+    step: 1
+    unit_of_measurement: "h"
+
+  futura_temperature_setpoint:
+    name: "Požadovaná teplota"
+    min: 15
+    max: 28
+    step: 0.5
+    unit_of_measurement: "°C"
+
+  futura_co2_high_threshold:
+    name: "CO₂ – práh pro varování"
+    min: 400
+    max: 3000
+    step: 50
+    unit_of_measurement: "ppm"
+    initial: 1500
+
+input_select:
+  futura_vent_mode:
+    name: "Režim větrání"
+    options: [Vypnuto, "1", "2", "3", "4", "5", Auto]
+    icon: mdi:fan
+
+  futura_humidity_mode:
+    name: "Požadovaná vlhkost"
+    options:
+      - Suché
+      - Komfortní
+      - Vlhké
+
+input_button:
+  futura_boost_start:
+    name: "Spustit Boost (60 min)"
+  futura_circulation_start:
+    name: "Spustit Cirkulaci (30 min)"
+
+input_datetime:
+  futura_away_begin:
+    name: "Dovolená – začátek"
+    has_date: true
+    has_time: true
+  futura_away_end:
+    name: "Dovolená – konec"
+    has_date: true
+    has_time: true
+
+# ---------- Template: sensors / switches / binary_sensors ----------
+template:
+  - sensor:
+      - name: futura_current_temp_ui
+        device_class: temperature
+        unit_of_measurement: "°C"
+        availability: >
+          {% set t = states('sensor.alfa_temp_1')|float(none) %}
+          {{ t is not none and -50 <= t <= 80 and t != -99.0 }}
+        state: >
+          {{ (states('sensor.alfa_temp_1')|float(0)) | round(1) }}
+
+      - name: futura_mode_text
+        icon: mdi:fan
+        state: >
+          {% set v = states('sensor.futura_mode_raw')|int(0) %}
+          {% set arr = ['Vypnuto','1','2','3','4','5','Auto'] %}
+          {{ arr[v] if v in [0,1,2,3,4,5,6] else 'Neznámé' }}
+
+      - name: futura_boost_remaining_min
+        unit_of_measurement: "min"
+        state: "{{ (states('sensor.futura_boost_remaining_s')|int(0) / 60)|round(0) }}"
+
+      - name: futura_circulation_remaining_min
+        unit_of_measurement: "min"
+        state: "{{ (states('sensor.futura_circulation_remaining_s')|int(0) / 60)|round(0) }}"
+
+      - name: futura_night_remaining_h
+        unit_of_measurement: "h"
+        state: >
+          {% set s = states('sensor.futura_night_remaining_s')|int(0) %}
+          {{ 0 if s == 0 else ((s + 3599) // 3600) }}
+
+      - name: futura_party_remaining_h
+        unit_of_measurement: "h"
+        state: >
+          {% set s = states('sensor.futura_party_remaining_s')|int(0) %}
+          {{ 0 if s == 0 else ((s + 3599) // 3600) }}
+
+      - name: futura_away_begin_text
+        state: >
+          {% set ts = states('sensor.futura_away_begin_ts')|int(0) %}
+          {{ 'Nenastaveno' if ts == 0 else (ts | timestamp_custom('%Y-%m-%d %H:%M', true)) }}
+
+      - name: futura_away_end_text
+        state: >
+          {% set ts = states('sensor.futura_away_end_ts')|int(0) %}
+          {{ 'Nenastaveno' if ts == 0 else (ts | timestamp_custom('%Y-%m-%d %H:%M', true)) }}
+
+    switch:
+      - name: futura_time_program
+        icon: mdi:calendar-clock
+        state: "{{ states('sensor.futura_time_program_raw')|int(0) == 1 }}"
+        turn_on:  { service: modbus.write_register, data: { hub: futura, slave: 1, address: 12, value: 1 } }
+        turn_off: { service: modbus.write_register, data: { hub: futura, slave: 1, address: 12, value: 0 } }
+
+      - name: futura_bypass_enable
+        icon: mdi:swap-horizontal-bold
+        state: "{{ states('sensor.futura_bypass_enable_raw')|int(0) == 1 }}"
+        turn_on:  { service: modbus.write_register, data: { hub: futura, slave: 1, address: 14, value: 1 } }
+        turn_off: { service: modbus.write_register, data: { hub: futura, slave: 1, address: 14, value: 0 } }
+
+      - name: futura_heating_enable
+        icon: mdi:radiator
+        state: "{{ states('sensor.futura_heating_enable_raw')|int(0) == 1 }}"
+        turn_on:  { service: modbus.write_register, data: { hub: futura, slave: 1, address: 15, value: 1 } }
+        turn_off: { service: modbus.write_register, data: { hub: futura, slave: 1, address: 15, value: 0 } }
+
+      - name: futura_cooling_enable
+        icon: mdi:snowflake
+        state: "{{ states('sensor.futura_cooling_enable_raw')|int(0) == 1 }}"
+        turn_on:  { service: modbus.write_register, data: { hub: futura, slave: 1, address: 16, value: 1 } }
+        turn_off: { service: modbus.write_register, data: { hub: futura, slave: 1, address: 16, value: 0 } }
+
+      - name: futura_comfort_enable
+        icon: mdi:account-star
+        state: "{{ states('sensor.futura_comfort_enable_raw')|int(0) == 1 }}"
+        turn_on:  { service: modbus.write_register, data: { hub: futura, slave: 1, address: 17, value: 1 } }
+        turn_off: { service: modbus.write_register, data: { hub: futura, slave: 1, address: 17, value: 0 } }
+
+      - name: futura_away
+        icon: mdi:beach
+        state: >
+          {% set m = states('sensor.futura_modes_bits_raw')|int(0) %}
+          {{ ((m // (2 ** 4)) % 2) == 1 }}
+        turn_on:
+          service: script.futura_write_away_from_helpers
+        turn_off:
+          service: script.futura_clear_away
+
+    binary_sensor:
+      # Protiradon – jen číst
+      - name: antiradon_active
+        icon: mdi:radioactive
+        device_class: problem
+        state: "{{ states('sensor.futura_antiradon_raw')|int(0) == 0 }}"
+
+      # CO2 varování (od ALFA)
+      - name: warning_high_co2
+        icon: mdi:molecule-co2
+        device_class: problem
+        state: >
+          {% set co2 = states('sensor.alfa_co2_1')|int(0) %}
+          {% set th = states('input_number.futura_co2_high_threshold')|int(1500) %}
+          {{ co2 > th }}
+
+      # Any error/warning summary
+      - name: any_error
+        icon: mdi:alert-circle
+        device_class: problem
+        state: "{{ states('sensor.futura_errors_bits_raw')|int(0) != 0 }}"
+      - name: any_warning
+        icon: mdi:alert
+        device_class: problem
+        state: "{{ states('sensor.futura_warnings_bits_raw')|int(0) != 0 }}"
+
+      # Error bits 0..12 (bez loopu)
+      - name: error_sensor_ambient
+        icon: mdi:thermometer-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 0)) % 2) == 1 }}
+      - name: error_sensor_indoor
+        icon: mdi:thermometer-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 1)) % 2) == 1 }}
+      - name: error_sensor_fresh
+        icon: mdi:thermometer-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 2)) % 2) == 1 }}
+      - name: error_sensor_waste
+        icon: mdi:thermometer-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 3)) % 2) == 1 }}
+      - name: error_fan_supply
+        icon: mdi:fan-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 4)) % 2) == 1 }}
+      - name: error_fan_extract
+        icon: mdi:fan-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 5)) % 2) == 1 }}
+      - name: error_hex_comm
+        icon: mdi:swap-horizontal-circle
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 6)) % 2) == 1 }}
+      - name: error_hex_damper
+        icon: mdi:unfold-more-horizontal
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 7)) % 2) == 1 }}
+      - name: error_io_board_comm
+        icon: mdi:server-network
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 8)) % 2) == 1 }}
+      - name: error_fan_supply_blocked
+        icon: mdi:fan-off
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 9)) % 2) == 1 }}
+      - name: error_fan_extract_blocked
+        icon: mdi:fan-off
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 10)) % 2) == 1 }}
+      - name: error_coolbreeze_comm
+        icon: mdi:snowflake-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 11)) % 2) == 1 }}
+      - name: error_coolbreeze_outdoor
+        icon: mdi:snowflake-alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_errors_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 12)) % 2) == 1 }}
+
+      # Warning bits 0..31 – explicitně, bez loopu
+      - name: warning_bit_0
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 0)) % 2) == 1 }}
+      - name: warning_bit_1
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 1)) % 2) == 1 }}
+      - name: warning_bit_2
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 2)) % 2) == 1 }}
+      - name: warning_bit_3
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 3)) % 2) == 1 }}
+      - name: warning_bit_4
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 4)) % 2) == 1 }}
+      - name: warning_bit_5
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 5)) % 2) == 1 }}
+      - name: warning_bit_6
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 6)) % 2) == 1 }}
+      - name: warning_bit_7
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 7)) % 2) == 1 }}
+      - name: warning_bit_8
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 8)) % 2) == 1 }}
+      - name: warning_bit_9
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 9)) % 2) == 1 }}
+      - name: warning_bit_10
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 10)) % 2) == 1 }}
+      - name: warning_bit_11
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 11)) % 2) == 1 }}
+      - name: warning_bit_12
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 12)) % 2) == 1 }}
+      - name: warning_bit_13
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 13)) % 2) == 1 }}
+      - name: warning_bit_14
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 14)) % 2) == 1 }}
+      - name: warning_bit_15
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 15)) % 2) == 1 }}
+      - name: warning_bit_16
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 16)) % 2) == 1 }}
+      - name: warning_bit_17
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 17)) % 2) == 1 }}
+      - name: warning_bit_18
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 18)) % 2) == 1 }}
+      - name: warning_bit_19
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 19)) % 2) == 1 }}
+      - name: warning_bit_20
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 20)) % 2) == 1 }}
+      - name: warning_bit_21
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 21)) % 2) == 1 }}
+      - name: warning_bit_22
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 22)) % 2) == 1 }}
+      - name: warning_bit_23
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 23)) % 2) == 1 }}
+      - name: warning_bit_24
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 24)) % 2) == 1 }}
+      - name: warning_bit_25
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 25)) % 2) == 1 }}
+      - name: warning_bit_26
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 26)) % 2) == 1 }}
+      - name: warning_bit_27
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 27)) % 2) == 1 }}
+      - name: warning_bit_28
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 28)) % 2) == 1 }}
+      - name: warning_bit_29
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 29)) % 2) == 1 }}
+      - name: warning_bit_30
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 30)) % 2) == 1 }}
+      - name: warning_bit_31
+        icon: mdi:alert
+        device_class: problem
+        state: >
+          {% set v = states('sensor.futura_warnings_bits_raw')|int(0) %}
+          {{ ((v // (2 ** 31)) % 2) == 1 }}
+
+# ---------- Skripty ----------
+script:
+  futura_soft_boost:
+    alias: "Futura – Soft Boost (fallback)"
+    mode: restart
+    fields:
+      minutes:
+        description: Doba boostu v minutách
+        example: 10
+    sequence:
+      - variables:
+          mins: >-
+            {{ (minutes if minutes is defined
+                else states('input_number.futura_boost_minutes')) | int(10) }}
+          secs: "{{ (mins * 60) | int }}"
+          prev: "{{ states('sensor.futura_mode_raw')|int(0) }}"
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 0, value: 5 }
+      - delay: "{{ secs | int }}"
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 0, value: "{{ prev | int(0) }}" }
+
+  futura_boost_try:
+    alias: "Futura – Boost (robustní pokus)"
+    mode: restart
+    sequence:
+      - variables:
+          secs: "{{ (states('input_number.futura_boost_minutes')|int(10) * 60) | int }}"
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 1, value: "{{ secs }}" }
+      - wait_template: "{{ states('sensor.futura_boost_remaining_s')|int(0) > 0 }}"
+        timeout: "00:00:03"
+        continue_on_timeout: true
+      - choose:
+          - conditions: "{{ states('sensor.futura_boost_remaining_s')|int(0) == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 1, value: "{{ secs }}" }
+
+  futura_circulation_try:
+    alias: "Futura – Cirkulace (robustní pokus)"
+    mode: restart
+    sequence:
+      - variables:
+          secs: "{{ (states('input_number.futura_circulation_minutes')|int(30) * 60) | int }}"
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 2, value: "{{ secs }}" }
+      - wait_template: "{{ states('sensor.futura_circulation_remaining_s')|int(0) > 0 }}"
+        timeout: "00:00:03"
+        continue_on_timeout: true
+      - choose:
+          - conditions: "{{ states('sensor.futura_circulation_remaining_s')|int(0) == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 2, value: "{{ secs }}" }
+
+  futura_write_away_from_helpers:
+    alias: "Futura – zapsat Dovolenou (z helperů)"
+    sequence:
+      - variables:
+          now_ts: "{{ as_timestamp(now())|int }}"
+          b_ts_raw: "{{ as_timestamp(states('input_datetime.futura_away_begin'), 0) | int(0) }}"
+          e_ts_raw: "{{ as_timestamp(states('input_datetime.futura_away_end'), 0) | int(0) }}"
+          b_ts: "{{ b_ts_raw if b_ts_raw > 0 else now_ts }}"
+          e_ts_tmp: "{{ e_ts_raw if e_ts_raw > b_ts else (b_ts + 7*24*3600) }}"
+          b_hi: "{{ (b_ts // 65536) | int }}"
+          b_lo: "{{ (b_ts % 65536) | int }}"
+          e_hi: "{{ (e_ts_tmp // 65536) | int }}"
+          e_lo: "{{ (e_ts_tmp % 65536) | int }}"
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 6, value: "{{ b_hi }}" }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 7, value: "{{ b_lo }}" }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 8, value: "{{ e_hi }}" }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 9, value: "{{ e_lo }}" }
+
+  futura_clear_away:
+    alias: "Futura – zrušit Dovolenou"
+    sequence:
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 6, value: 0 }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 7, value: 0 }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 8, value: 0 }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 9, value: 0 }
+
+# ---------- Automatizace ----------
+automation:
+  # Režim větrání
+  - id: futura_set_vent_mode
+    alias: "Futura – set vent mode"
+    trigger:
+      - platform: state
+        entity_id: input_select.futura_vent_mode
+    condition:
+      - condition: template
+        value_template: >
+          {% set map = {'Vypnuto':0,'1':1,'2':2,'3':3,'4':4,'5':5,'Auto':6} %}
+          {% set sel = states('input_select.futura_vent_mode') %}
+          {% if sel in map %}
+            {{ (states('sensor.futura_mode_raw')|int(0)) != map[sel] }}
+          {% else %}
+            false
+          {% endif %}
+    action:
+      - variables: { map: {'Vypnuto':0,'1':1,'2':2,'3':3,'4':4,'5':5,'Auto':6} }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 0, value: "{{ map[states('input_select.futura_vent_mode')] }}" }
+
+  - id: futura_sync_vent_mode
+    alias: "Futura – sync vent mode helper"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_mode_raw
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          v: "{{ states('sensor.futura_mode_raw')|int(0) }}"
+          arr: ['Vypnuto','1','2','3','4','5','Auto']
+          opt: "{{ arr[v] if v in [0,1,2,3,4,5,6] else 'Vypnuto' }}"
+      - choose:
+          - conditions: "{{ states('input_select.futura_vent_mode') != opt }}"
+            sequence:
+              - service: input_select.select_option
+                data: { entity_id: input_select.futura_vent_mode, option: "{{ opt }}" }
+
+  # Teplota
+  - id: futura_set_temp
+    alias: "Futura – set temperature"
+    trigger:
+      - platform: state
+        entity_id: input_number.futura_temperature_setpoint
+    action:
+      - variables: { t: "{{ states('input_number.futura_temperature_setpoint')|float(22) }}" }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 10, value: "{{ (t*10)|int }}" }
+
+  - id: futura_sync_temp
+    alias: "Futura – sync temperature helper"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_temp_set_raw
+      - platform: homeassistant
+        event: start
+    action:
+      - choose:
+          - conditions: "{{ states('sensor.futura_temp_set_raw') not in ['unknown','unavailable','None',''] }}"
+            sequence:
+              - service: input_number.set_value
+                data: { entity_id: input_number.futura_temperature_setpoint, value: "{{ states('sensor.futura_temp_set_raw') }}" }
+
+  # Vlhkost (Suché/Komfortní/Vlhké)
+  - id: futura_set_humi_mode
+    alias: "Futura – set humidity mode"
+    trigger:
+      - platform: state
+        entity_id: input_select.futura_humidity_mode
+    condition:
+      - condition: template
+        value_template: >
+          {% set map = {'Suché':25,'Komfortní':50,'Vlhké':75} %}
+          {{ (states('sensor.futura_humi_set_raw')|float(0))|round(0) != map[states('input_select.futura_humidity_mode')] }}
+    action:
+      - variables: { map: {'Suché':25,'Komfortní':50,'Vlhké':75} }
+      - service: modbus.write_register
+        data: { hub: futura, slave: 1, address: 11, value: "{{ (map[states('input_select.futura_humidity_mode')]*10)|int }}" }
+
+  - id: futura_sync_humi_mode
+    alias: "Futura – sync humidity mode helper"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_humi_set_raw
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          val: "{{ states('sensor.futura_humi_set_raw')|float(50) }}"
+          opt: >-
+            {% if val < 37.5 %}Suché{% elif val < 62.5 %}Komfortní{% else %}Vlhké{% endif %}
+      - choose:
+          - conditions: "{{ states('input_select.futura_humidity_mode') != opt }}"
+            sequence:
+              - service: input_select.select_option
+                data: { entity_id: input_select.futura_humidity_mode, option: "{{ opt }}" }
+
+  # --- BOOST ---
+  - id: futura_boost_button
+    alias: "Futura – spustit Boost tlačítkem (60 min)"
+    trigger:
+      - platform: state
+        entity_id: input_button.futura_boost_start
+    action:
+      - service: input_number.set_value
+        data: { entity_id: input_number.futura_boost_minutes, value: 60 }
+      - service: script.futura_boost_try
+
+  - id: futura_sync_boost_minutes
+    alias: "Futura – sync Boost minutes helper"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_boost_remaining_s
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          s: "{{ states('sensor.futura_boost_remaining_s')|int(0) }}"
+          m: "{{ ((s + 59) // 60) | int }}"              # minuty (ceil)
+          m15: "{{ (((m + 14) // 15) * 15) | int }}"     # zarovnáno na 15
+      - choose:
+          - conditions: "{{ states('input_number.futura_boost_minutes')|int(-1) != m15 }}"
+            sequence:
+              - service: input_number.set_value
+                data:
+                  entity_id: input_number.futura_boost_minutes
+                  value: "{{ m15 }}"
+
+  - id: futura_boost_from_slider
+    alias: "Futura – Boost ze slideru"
+    trigger:
+      - platform: state
+        entity_id: input_number.futura_boost_minutes
+    variables:
+      new: "{{ ((trigger.to_state.state|int(0)) // 15) * 15 }}"   # pojistné zarovnání
+      cur_min: "{{ ((states('sensor.futura_boost_remaining_s')|int(0) + 59) // 60) | int }}"
+      cur: "{{ (((cur_min + 14) // 15) * 15) | int }}"           # aktuál zaokrouhlený na 15
+    condition:
+      - condition: template
+        value_template: "{{ new != cur }}"
+    action:
+      - choose:
+          - conditions: "{{ new == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 1, value: 0 }
+          - conditions: "{{ cur == 0 and new > 0 }}"
+            sequence:
+              - service: script.futura_boost_try
+          - conditions: "{{ cur > 0 and new > 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data:
+                  hub: futura
+                  slave: 1
+                  address: 1
+                  value: "{{ (new * 60) | int }}"
+
+  # --- CIRKULACE ---
+  - id: futura_circulation_button
+    alias: "Futura – spustit Cirkulaci tlačítkem (30 min)"
+    trigger:
+      - platform: state
+        entity_id: input_button.futura_circulation_start
+    action:
+      - service: input_number.set_value
+        data: { entity_id: input_number.futura_circulation_minutes, value: 30 }
+      - service: script.futura_circulation_try
+
+  - id: futura_sync_circulation_minutes
+    alias: "Futura – sync Cirkulace minutes helper"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_circulation_remaining_s
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          s: "{{ states('sensor.futura_circulation_remaining_s')|int(0) }}"
+          m: "{{ ((s + 59) // 60) | int }}"
+      - choose:
+          - conditions: "{{ states('input_number.futura_circulation_minutes')|int(-1) != m }}"
+            sequence:
+              - service: input_number.set_value
+                data: { entity_id: input_number.futura_circulation_minutes, value: "{{ m }}" }
+
+  - id: futura_circulation_from_slider
+    alias: "Futura – Cirkulace ze slideru"
+    trigger:
+      - platform: state
+        entity_id: input_number.futura_circulation_minutes
+    variables:
+      new: "{{ trigger.to_state.state|int(0) }}"
+      cur: "{{ ((states('sensor.futura_circulation_remaining_s')|int(0) + 59) // 60) | int }}"
+    condition:
+      - condition: template
+        value_template: "{{ new != cur }}"
+    action:
+      - choose:
+          - conditions: "{{ new == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 2, value: 0 }
+          - conditions: "{{ cur == 0 and new > 0 }}"
+            sequence:
+              - service: script.futura_circulation_try
+          - conditions: "{{ cur > 0 and new > 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 2, value: "{{ (new*60)|int }}" }
+
+  # --- NOC (HR4) – 0–10 h ---
+  - id: futura_sync_night_hours
+    alias: "Futura – sync Noc (hodiny)"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_night_remaining_s
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          s: "{{ states('sensor.futura_night_remaining_s')|int(0) }}"
+          h: "{{ 0 if s == 0 else ((s + 3599) // 3600) }}"
+      - choose:
+          - conditions: "{{ states('input_number.futura_night_hours')|int(-1) != h }}"
+            sequence:
+              - service: input_number.set_value
+                data:
+                  entity_id: input_number.futura_night_hours
+                  value: "{{ h }}"
+
+  - id: futura_night_from_hours
+    alias: "Futura – Noc ze slideru (hodiny)"
+    trigger:
+      - platform: state
+        entity_id: input_number.futura_night_hours
+    variables:
+      new: "{{ trigger.to_state.state|int(0) }}"
+      s_now: "{{ states('sensor.futura_night_remaining_s')|int(0) }}"
+      h_now: "{{ 0 if s_now == 0 else ((s_now + 3599) // 3600) }}"
+    condition:
+      - condition: template
+        value_template: "{{ new != h_now }}"
+    action:
+      - choose:
+          - conditions: "{{ new == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 4, value: 0 }
+          - conditions: "{{ new > 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data:
+                  hub: futura
+                  slave: 1
+                  address: 4
+                  value: "{{ (min(new, 10) * 3600) | int }}"
+
+  # --- PARTY (HR5) – 0–8 h ---
+  - id: futura_sync_party_hours
+    alias: "Futura – sync Party (hodiny)"
+    trigger:
+      - platform: state
+        entity_id: sensor.futura_party_remaining_s
+      - platform: homeassistant
+        event: start
+    action:
+      - variables:
+          s: "{{ states('sensor.futura_party_remaining_s')|int(0) }}"
+          h: "{{ 0 if s == 0 else ((s + 3599) // 3600) }}"
+      - choose:
+          - conditions: "{{ states('input_number.futura_party_hours')|int(-1) != h }}"
+            sequence:
+              - service: input_number.set_value
+                data:
+                  entity_id: input_number.futura_party_hours
+                  value: "{{ h }}"
+
+  - id: futura_party_from_hours
+    alias: "Futura – Party ze slideru (hodiny)"
+    trigger:
+      - platform: state
+        entity_id: input_number.futura_party_hours
+    variables:
+      new: "{{ trigger.to_state.state|int(0) }}"
+      s_now: "{{ states('sensor.futura_party_remaining_s')|int(0) }}"
+      h_now: "{{ 0 if s_now == 0 else ((s_now + 3599) // 3600) }}"
+    condition:
+      - condition: template
+        value_template: "{{ new != h_now }}"
+    action:
+      - choose:
+          - conditions: "{{ new == 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data: { hub: futura, slave: 1, address: 5, value: 0 }
+          - conditions: "{{ new > 0 }}"
+            sequence:
+              - service: modbus.write_register
+                data:
+                  hub: futura
+                  slave: 1
+                  address: 5
+                  value: "{{ (min(new, 8) * 3600) | int }}"
+
+# ---------- Friendly names (CZ popisky) ----------
+homeassistant:
+  customize:
+    # RAW registry
+    sensor.futura_variant_raw: { friendly_name: "Futura – varianta (raw)" }
+    sensor.futura_modes_bits_raw: { friendly_name: "Systém – stavové bity (raw)" }
+    sensor.futura_errors_bits_raw: { friendly_name: "Futura – chyby (bity, raw)" }
+    sensor.futura_warnings_bits_raw: { friendly_name: "Futura – varování (bity, raw)" }
+
+    # Teploty / vlhkosti
+    sensor.futura_temp_outdoor: { friendly_name: "Teplota venku" }
+    sensor.futura_temp_supply:  { friendly_name: "Teplota do domu" }
+    sensor.futura_temp_extract: { friendly_name: "Teplota z domu" }
+    sensor.futura_temp_exhaust: { friendly_name: "Teplota odtah" }
+    sensor.futura_temp_outdoor_ntc: { friendly_name: "Teplota NTC venku" }
+
+    sensor.futura_humi_outdoor:  { friendly_name: "Vlhkost venku" }
+    sensor.futura_humi_supply:   { friendly_name: "Vlhkost do domu" }
+    sensor.futura_humi_extract:  { friendly_name: "Vlhkost z domu" }
+    sensor.futura_humi_exhaust:  { friendly_name: "Vlhkost odtah" }
+
+    # Výkony
+    sensor.futura_filter_wear: { friendly_name: "Zanesení filtrů" }
+    sensor.futura_power:       { friendly_name: "Příkon" }
+    sensor.futura_air_flow:    { friendly_name: "Vzduchové množství" }
+
+    # ALFA
+    sensor.alfa_co2_1:  { friendly_name: "ALFA – CO₂" }
+    sensor.alfa_temp_1: { friendly_name: "ALFA – teplota" }
+    sensor.alfa_humi_1: { friendly_name: "ALFA – vlhkost" }
+
+    # Funkce – texty a časy
+    sensor.futura_current_temp_ui:     { friendly_name: "Aktuální teplota v místnosti" }
+    sensor.futura_mode_text:           { friendly_name: "Režim větrání (text)" }
+    sensor.futura_boost_remaining_min: { friendly_name: "Boost – zbývá (min)" }
+    sensor.futura_circulation_remaining_min: { friendly_name: "Cirkulace – zbývá (min)" }
+    sensor.futura_night_remaining_h:   { friendly_name: "Noc – zbývá (h)" }
+    sensor.futura_party_remaining_h:   { friendly_name: "Party – zbývá (h)" }
+
+    sensor.futura_mode_raw: { friendly_name: "Režim (raw)" }
+    sensor.futura_boost_remaining_s: { friendly_name: "Boost – zbývá (s)" }
+    sensor.futura_circulation_remaining_s: { friendly_name: "Cirkulace – zbývá (s)" }
+    sensor.futura_night_remaining_s: { friendly_name: "Noc – zbývá (s)" }
+    sensor.futura_party_remaining_s: { friendly_name: "Party – zbývá (s)" }
+    sensor.futura_overpressure_remaining_s: { friendly_name: "Přetlak – zbývá (s)" }
+
+    # Dovolená
+    sensor.futura_away_begin_ts:  { friendly_name: "Dovolená – začátek (unix)" }
+    sensor.futura_away_end_ts:    { friendly_name: "Dovolená – konec (unix)" }
+    sensor.futura_away_begin_text: { friendly_name: "Dovolená – začátek" }
+    sensor.futura_away_end_text:  { friendly_name: "Dovolená – konec" }
+    switch.futura_away:           { friendly_name: "Dovolená (zap/vyp)" }
+
+    # Konfigurace
+    sensor.futura_temp_set_raw:  { friendly_name: "Požadovaná teplota (raw)" }
+    sensor.futura_humi_set_raw:  { friendly_name: "Požadovaná vlhkost (raw)" }
+    sensor.futura_time_program_raw: { friendly_name: "Časový program (raw)" }
+    sensor.futura_antiradon_raw: { friendly_name: "Protiradon (raw)" }
+    sensor.futura_bypass_enable_raw: { friendly_name: "Bypass povolen (raw)" }
+    sensor.futura_heating_enable_raw: { friendly_name: "Topení povoleno (raw)" }
+    sensor.futura_cooling_enable_raw: { friendly_name: "Chlazení povoleno (raw)" }
+    sensor.futura_comfort_enable_raw: { friendly_name: "Komfortní režim (raw)" }
+
+    # Přepínače
+    switch.futura_time_program:  { friendly_name: "Časový program" }
+    switch.futura_bypass_enable: { friendly_name: "Bypass povolen" }
+    switch.futura_heating_enable: { friendly_name: "Topení povoleno" }
+    switch.futura_cooling_enable: { friendly_name: "Chlazení povoleno" }
+    switch.futura_comfort_enable: { friendly_name: "Komfortní režim" }
+
+    # Souhrny a CO₂
+    binary_sensor.antiradon_active: { friendly_name: "Protiradon – aktivní" }
+    binary_sensor.any_error:        { friendly_name: "Futura – je nějaká chyba" }
+    binary_sensor.any_warning:      { friendly_name: "Futura – je nějaké varování" }
+    binary_sensor.warning_high_co2: { friendly_name: "Varování – vysoký CO₂" }
+
+    # Error popisky (přesně podle PDF)
+    binary_sensor.error_sensor_ambient:        { friendly_name: "Chyba senzoru (ambient)" }
+    binary_sensor.error_sensor_indoor:         { friendly_name: "Chyba senzoru (indoor)" }
+    binary_sensor.error_sensor_fresh:          { friendly_name: "Chyba senzoru (fresh)" }
+    binary_sensor.error_sensor_waste:          { friendly_name: "Chyba senzoru (waste)" }
+    binary_sensor.error_fan_supply:            { friendly_name: "Chyba přívodního ventilátoru" }
+    binary_sensor.error_fan_extract:           { friendly_name: "Chyba odtahového ventilátoru" }
+    binary_sensor.error_hex_comm:              { friendly_name: "Chyba komunikace s výměníkem" }
+    binary_sensor.error_hex_damper:            { friendly_name: "Chyba polohy klapek výměníku" }
+    binary_sensor.error_io_board_comm:         { friendly_name: "Chyba komunikace s IO deskou" }
+    binary_sensor.error_fan_supply_blocked:    { friendly_name: "Zablokovaný přívodní ventilátor" }
+    binary_sensor.error_fan_extract_blocked:   { friendly_name: "Zablokovaný odtahový ventilátor" }
+    binary_sensor.error_coolbreeze_comm:       { friendly_name: "Chyba komunikace s CoolBreeze" }
+    binary_sensor.error_coolbreeze_outdoor:    { friendly_name: "Chyba venkovní jednotky CoolBreeze" }
+
+    # Warning popisky 0..31 (podle PDF + nezadokumentované)
+    binary_sensor.warning_bit_0:  { friendly_name: "Neinicializovaný filtr" }
+    binary_sensor.warning_bit_1:  { friendly_name: "Filtr je příliš zanesený" }
+    binary_sensor.warning_bit_2:  { friendly_name: "Filtr se používá příliš dlouho" }
+    binary_sensor.warning_bit_3:  { friendly_name: "Nízké napětí RTC baterie" }
+    binary_sensor.warning_bit_4:  { friendly_name: "Příliš vysoké otáčky přívodního ventilátoru" }
+    binary_sensor.warning_bit_5:  { friendly_name: "Příliš vysoké otáčky odtahového ventilátoru" }
+    binary_sensor.warning_bit_6:  { friendly_name: "Varování – bit 6 (nezadokumentováno)" }
+    binary_sensor.warning_bit_7:  { friendly_name: "Varování – bit 7 (nezadokumentováno)" }
+    binary_sensor.warning_bit_8:  { friendly_name: "Příliš nízká venkovní teplota, omezená funkce větrání" }
+    binary_sensor.warning_bit_9:  { friendly_name: "Nesprávná konfigurace zón – přívod" }
+    binary_sensor.warning_bit_10: { friendly_name: "Nesprávná konfigurace zón – odtah" }
+    binary_sensor.warning_bit_11: { friendly_name: "Nouzové vypnutí" }
+    binary_sensor.warning_bit_12: { friendly_name: "Chyba komunikace se SuperBreeze" }
+    binary_sensor.warning_bit_13: { friendly_name: "Obecná chyba SuperBreeze" }
+    binary_sensor.warning_bit_14: { friendly_name: "Varování – bit 14 (nezadokumentováno)" }
+    binary_sensor.warning_bit_15: { friendly_name: "Varování – bit 15 (nezadokumentováno)" }
+    binary_sensor.warning_bit_16: { friendly_name: "Varování – bit 16 (nezadokumentováno)" }
+    binary_sensor.warning_bit_17: { friendly_name: "Varování – bit 17 (nezadokumentováno)" }
+    binary_sensor.warning_bit_18: { friendly_name: "Varování – bit 18 (nezadokumentováno)" }
+    binary_sensor.warning_bit_19: { friendly_name: "Varování – bit 19 (nezadokumentováno)" }
+    binary_sensor.warning_bit_20: { friendly_name: "Varování – bit 20 (nezadokumentováno)" }
+    binary_sensor.warning_bit_21: { friendly_name: "Varování – bit 21 (nezadokumentováno)" }
+    binary_sensor.warning_bit_22: { friendly_name: "Varování – bit 22 (nezadokumentováno)" }
+    binary_sensor.warning_bit_23: { friendly_name: "Varování – bit 23 (nezadokumentováno)" }
+    binary_sensor.warning_bit_24: { friendly_name: "Varování – bit 24 (nezadokumentováno)" }
+    binary_sensor.warning_bit_25: { friendly_name: "Varování – bit 25 (nezadokumentováno)" }
+    binary_sensor.warning_bit_26: { friendly_name: "Varování – bit 26 (nezadokumentováno)" }
+    binary_sensor.warning_bit_27: { friendly_name: "Varování – bit 27 (nezadokumentováno)" }
+    binary_sensor.warning_bit_28: { friendly_name: "Varování – bit 28 (nezadokumentováno)" }
+    binary_sensor.warning_bit_29: { friendly_name: "Varování – bit 29 (nezadokumentováno)" }
+    binary_sensor.warning_bit_30: { friendly_name: "Varování – bit 30 (nezadokumentováno)" }
+    binary_sensor.warning_bit_31: { friendly_name: "Varování – bit 31 (nezadokumentováno)" }

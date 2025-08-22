@@ -1,0 +1,223 @@
+title: Futura panel
+views:
+  - title: Futura
+    path: futura
+    icon: mdi:home-fan
+    badges: []
+    cards:
+      - type: entities
+        title: Přehled a režimy
+        entities:
+          - entity: select.jablotron_futura_rezim_vetrani
+            name: Režim větrání
+          - entity: sensor.jablotron_futura_rezim_vetrani_text
+            name: Aktuální režim (text)
+          - type: section
+            label: Přepínače
+          - entity: switch.jablotron_futura_casovy_program
+          - entity: switch.jablotron_futura_komfortni_rezim
+          - entity: switch.jablotron_futura_bypass_povolen
+          - entity: switch.jablotron_futura_topeni_povoleno
+          - entity: switch.jablotron_futura_chlazeni_povoleno
+          - type: section
+            label: Systém
+          - entity: binary_sensor.jablotron_futura_protiradon_aktivni
+            name: Protiradon – aktivní
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            title: Boost
+            entities:
+              - entity: number.jablotron_futura_boost_minuty
+                name: Nastavit minuty (0 = vypnout)
+              - entity: sensor.jablotron_futura_boost_zbyva_min
+                name: Zbývá (min)
+              - entity: button.jablotron_futura_spustit_boost_60_min
+                name: Spustit Boost (60 min)
+          - type: entities
+            title: Cirkulace
+            entities:
+              - entity: number.jablotron_futura_cirkulace_minuty
+                name: Nastavit minuty (0 = vypnout)
+              - entity: sensor.jablotron_futura_cirkulace_zbyva_min
+                name: Zbývá (min)
+              - entity: button.jablotron_futura_spustit_cirkulaci_30_min
+                name: Spustit Cirkulaci (30 min)
+      - type: horizontal-stack
+        cards:
+          - type: entities
+            title: Noc
+            entities:
+              - entity: number.jablotron_futura_noc_hodiny
+                name: Doba (h)
+              - entity: sensor.jablotron_futura_noc_zbyva_h
+                name: Zbývá (h)
+          - type: entities
+            title: Party
+            entities:
+              - entity: number.jablotron_futura_party_hodiny
+                name: Doba (h)
+              - entity: sensor.jablotron_futura_party_zbyva_h
+                name: Zbývá (h)
+      - type: entities
+        title: Nastavení klimatu
+        entities:
+          - entity: number.jablotron_futura_pozadovana_teplota
+            name: Požadovaná teplota
+          - entity: select.jablotron_futura_pozadovana_vlhkost
+            name: Požadovaná vlhkost
+      - type: entities
+        title: Dovolená
+        entities:
+          - type: button
+            name: Nastavit dovolenou (teď → +7 dní)
+            icon: mdi:beach
+            tap_action:
+              action: call-service
+              service: jablotron_futura.set_away
+          - type: button
+            name: Zrušit dovolenou
+            icon: mdi:beach-off
+            tap_action:
+              action: call-service
+              service: jablotron_futura.clear_away
+          - type: section
+            label: Stav
+          - entity: sensor.jablotron_futura_dovolena_zacatek
+            name: Začátek (text)
+          - entity: sensor.jablotron_futura_dovolena_konec
+            name: Konec (text)
+      - type: glance
+        title: Stav a výkon
+        show_name: true
+        show_state: true
+        entities:
+          - entity: sensor.jablotron_futura_prikon
+            name: Příkon
+          - entity: sensor.jablotron_futura_vzduchove_mnozstvi
+            name: Vzduch (m³/h)
+          - entity: sensor.jablotron_futura_zaneseni_filtru
+            name: Filtry (%)
+      - type: gauge
+        name: CO₂ (ppm)
+        entity: sensor.jablotron_futura_alfa_co2
+        min: 400
+        max: 3000
+        severity:
+          green: 0
+          yellow: 1000
+          red: 1500
+      - type: history-graph
+        title: Teploty (24 h)
+        hours_to_show: 24
+        refresh_interval: 0
+        entities:
+          - entity: sensor.jablotron_futura_teplota_venku
+            name: Venku
+          - entity: sensor.jablotron_futura_teplota_do_domu
+            name: Do domu
+          - entity: sensor.jablotron_futura_teplota_z_domu
+            name: Z domu
+          - entity: sensor.jablotron_futura_teplota_odtah
+            name: Odtah
+          - entity: sensor.jablotron_futura_alfa_teplota
+            name: ALFA
+      - type: history-graph
+        title: Vlhkost (24 h)
+        hours_to_show: 24
+        refresh_interval: 0
+        entities:
+          - entity: sensor.jablotron_futura_vlhkost_venku
+            name: Venku
+          - entity: sensor.jablotron_futura_vlhkost_do_domu
+            name: Do domu
+          - entity: sensor.jablotron_futura_vlhkost_z_domu
+            name: Z domu
+          - entity: sensor.jablotron_futura_vlhkost_odtah
+            name: Odtah
+          - entity: sensor.jablotron_futura_alfa_vlhkost
+            name: ALFA
+      - type: entities
+        title: Souhrn chyb a varování
+        entities:
+          - entity: binary_sensor.jablotron_futura_futura_je_nejaka_chyba
+            name: Futura – je nějaká chyba
+          - entity: binary_sensor.jablotron_futura_futura_je_nejake_varovani
+            name: Futura – je nějaké varování
+      - type: picture-elements
+        title: Ovládání na obrázku (volitelné)
+        image: /local/futura.jpg
+        elements:
+          - type: state-badge
+            entity: sensor.jablotron_futura_rezim_vetrani_text
+            style:
+              left: 10%
+              top: 12%
+          - type: state-badge
+            entity: sensor.jablotron_futura_prikon
+            style:
+              left: 28%
+              top: 12%
+          - type: state-badge
+            entity: sensor.jablotron_futura_vzduchove_mnozstvi
+            style:
+              left: 46%
+              top: 12%
+          - type: state-badge
+            entity: sensor.jablotron_futura_alfa_co2
+            style:
+              left: 64%
+              top: 12%
+          - type: state-badge
+            entity: binary_sensor.jablotron_futura_je_nejaka_chyba
+            style:
+              left: 82%
+              top: 12%
+          - type: icon
+            icon: mdi:fan-plus
+            title: Spustit Boost (60 min)
+            style:
+              left: 25%
+              top: 85%
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.jablotron_futura_spustit_boost_60_min
+          - type: icon
+            icon: mdi:fan-off
+            title: Vypnout Boost
+            style:
+              left: 35%
+              top: 85%
+            tap_action:
+              action: call-service
+              service: number.set_value
+              target:
+                entity_id: number.jablotron_futura_boost_minuty
+              data:
+                value: 0
+          - type: icon
+            icon: mdi:timer-plus
+            title: Spustit Cirkulaci (30 min)
+            style:
+              left: 55%
+              top: 85%
+            tap_action:
+              action: call-service
+              service: button.press
+              target:
+                entity_id: button.jablotron_futura_spustit_cirkulaci_30_min
+          - type: icon
+            icon: mdi:timer-off
+            title: Vypnout Cirkulaci
+            style:
+              left: 65%
+              top: 85%
+            tap_action:
+              action: call-service
+              service: number.set_value
+              target:
+                entity_id: number.jablotron_futura_cirkulace_minuty
+              data:
+                value: 0
