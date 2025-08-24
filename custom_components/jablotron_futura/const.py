@@ -47,6 +47,8 @@ KEYS = {
 
     "filter_wear": 40,          # uint16 (%)
     "power": 41,                # uint16 (W)
+    "heat_recovering": 42,      # uint16 (W)
+    "heating_power": 43,        # uint16 (W)
     "air_flow": 44,             # uint16 (m3/h)
 
     # ALFA 162..164

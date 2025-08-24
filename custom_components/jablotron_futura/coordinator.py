@@ -98,6 +98,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         inp_30_33 = await self._read_block(30, 4, input_regs=True)   # 30..33 (teploty)
         inp_34_38 = await self._read_block(34, 5, input_regs=True)   # 34..38 (vlhkosti + NTC)
         inp_40_41 = await self._read_block(40, 2, input_regs=True)   # 40..41 (filtr, příkon)
+        inp_42    = await self._read_block(42, 1, input_regs=True)   # 42 (zpětně získávané teplo)
+        inp_43    = await self._read_block(43, 1, input_regs=True)  # 43 (výkon topení dohřevu)
         inp_44    = await self._read_block(44, 1, input_regs=True)   # 44 (průtok)
         inp_alfa  = await self._read_block(162, 3, input_regs=True)  # ALFA 162..164
 
@@ -128,6 +130,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         # Výkony / průtok
         data["filter_wear"]      = self._u16_from(inp_40_41, 40, KEYS["filter_wear"])
         data["power"]            = self._u16_from(inp_40_41, 40, KEYS["power"])
+        data["heat_recovering"]  = self._u16_from(inp_42, 42, KEYS["heat_recovering"])
+        data["heating_power"]    = self._u16_from(inp_43, 43, KEYS["heat_recovering"])
         data["air_flow"]         = self._u16_from(inp_44,    44, KEYS["air_flow"])
 
         # ALFA

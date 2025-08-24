@@ -48,6 +48,8 @@ async def async_setup_entry(hass, entry, async_add_entities):
     # Performance
     ents.append(FuturaSimpleSensor(coord, "filter_wear", "Zanesení filtrů", PERCENTAGE))
     ents.append(FuturaSimpleSensor(coord, "power", "Příkon", UnitOfPower.WATT))
+    ents.append(FuturaSimpleSensor(coord, "heat_recovering", "Zpětně získávané teplo", UnitOfPower.WATT))
+    ents.append(FuturaSimpleSensor(coord, "heating_power", "Výkon topení dohřevu", UnitOfPower.WATT))
     ents.append(FuturaSimpleSensor(coord, "air_flow", "Vzduchové množství", UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR))
 
     # Config / helpers

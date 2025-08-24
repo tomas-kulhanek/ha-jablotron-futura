@@ -167,6 +167,14 @@ views:
           yellow: 1000
           red: 1500
       - type: history-graph
+        entities:
+          - entity: sensor.jablotron_futura_prikon
+          - entity: sensor.jablotron_futura_zpetne_ziskavane_teplo
+          - entity: sensor.jablotron_futura_vykon_topeni_dohrevu
+        title: Futura W
+        hours_to_show: 168
+        refresh_interval: 0
+      - type: history-graph
         title: Teploty (24 h)
         hours_to_show: 24
         refresh_interval: 0
