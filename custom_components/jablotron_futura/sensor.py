@@ -11,6 +11,7 @@ from homeassistant.const import (
     UnitOfPower,
     CONCENTRATION_PARTS_PER_MILLION,
     UnitOfVolumeFlowRate,
+    UnitOfElectricPotential,
 )
 
 from .entity import FuturaEntity
@@ -71,6 +72,11 @@ async def async_setup_entry(hass, entry, async_add_entities):
     ents.append(FuturaSimpleSensor(coord, "heat_recovering", "Zpětně získávané teplo", UnitOfPower.WATT))
     ents.append(FuturaSimpleSensor(coord, "heating_power", "Výkon topení dohřevu", UnitOfPower.WATT))
     ents.append(FuturaSimpleSensor(coord, "air_flow", "Vzduchové množství", UnitOfVolumeFlowRate.CUBIC_METERS_PER_HOUR))
+    ents.append(FuturaSimpleSensor(coord, "fan_power_supply",  "Výkon ventilátoru přívod", PERCENTAGE, state_class=SensorStateClass.MEASUREMENT))
+    ents.append(FuturaSimpleSensor(coord, "fan_power_exhaust", "Výkon ventilátoru odtah", PERCENTAGE, state_class=SensorStateClass.MEASUREMENT))
+    ents.append(FuturaSimpleSensor(coord, "fan_rpm_supply",    "Otáčky ventilátoru přívod", "rpm", state_class=SensorStateClass.MEASUREMENT))
+    ents.append(FuturaSimpleSensor(coord, "fan_rpm_exhaust", "Otáčky ventilátoru odtah", "rpm", state_class=SensorStateClass.MEASUREMENT))
+    ents.append(FuturaSimpleSensor(coord, "rtc_batt_voltage", "Napětí baterie RTC", UnitOfElectricPotential.MILLIVOLT, SensorDeviceClass.VOLTAGE))
 
     # Config / helpers
     ents.append(FuturaSimpleSensor(coord, "mode_raw", "Režim (raw)"))

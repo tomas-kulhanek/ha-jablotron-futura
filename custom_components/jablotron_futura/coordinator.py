@@ -116,10 +116,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         inp_14_21 = await self._read_block(14, 8, input_regs=True)   # 14..21 (variant + bity 16..21)
         inp_30_33 = await self._read_block(30, 4, input_regs=True)   # 30..33 (teploty)
         inp_34_38 = await self._read_block(34, 5, input_regs=True)   # 34..38 (vlhkosti + NTC)
-        inp_40_41 = await self._read_block(40, 2, input_regs=True)   # 40..41 (filtr, příkon)
-        inp_42    = await self._read_block(42, 1, input_regs=True)   # 42 (zpětně získávané teplo)
-        inp_43    = await self._read_block(43, 1, input_regs=True)  # 43 (výkon topení dohřevu)
-        inp_44    = await self._read_block(44, 1, input_regs=True)   # 44 (průtok)
+        inp_40_48 = await self._read_block(40, 9, input_regs=True)   # 40..48 (filtr, příkon, zpětně získávané teplo, výkon topení dohřevu, průtok, ventilátory)
+        inp_52 = await self._read_block(52, 1, input_regs=True)      # 52 baterie RTC
         inp_alfa_bits = await self._read_block(KEYS["alfa_connected_bits"], 1, input_regs=True)  # 75 (bitfield)
 
         # Holding area (0..17 je u Futury souvislý rozsah)
@@ -147,11 +145,16 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["humi_exhaust"]     = self._i16_from(inp_34_38, 34, KEYS["humi_exhaust"]) / 10.0
 
         # Výkony / průtok
-        data["filter_wear"]      = self._u16_from(inp_40_41, 40, KEYS["filter_wear"])
-        data["power"]            = self._u16_from(inp_40_41, 40, KEYS["power"])
-        data["heat_recovering"]  = self._u16_from(inp_42, 42, KEYS["heat_recovering"])
-        data["heating_power"]    = self._u16_from(inp_43, 43, KEYS["heating_power"])
-        data["air_flow"]         = self._u16_from(inp_44,    44, KEYS["air_flow"])
+        data["filter_wear"]      = self._u16_from(inp_40_48, 40, KEYS["filter_wear"])
+        data["power"]            = self._u16_from(inp_40_48, 40, KEYS["power"])
+        data["heat_recovering"]  = self._u16_from(inp_40_48, 40, KEYS["heat_recovering"])
+        data["heating_power"]    = self._u16_from(inp_40_48, 40, KEYS["heating_power"])
+        data["air_flow"]         = self._u16_from(inp_40_48, 40, KEYS["air_flow"])
+        data["fan_power_supply"] = self._u16_from(inp_40_48, 40, KEYS["fan_power_supply"])
+        data["fan_power_exhaust"]= self._u16_from(inp_40_48, 40, KEYS["fan_power_exhaust"])
+        data["fan_rpm_supply"]   = self._u16_from(inp_40_48, 40, KEYS["fan_rpm_supply"])
+        data["fan_rpm_exhaust"]  = self._u16_from(inp_40_48, 40, KEYS["fan_rpm_exhaust"])
+        data["rtc_batt_voltage"] = self._u16_from(inp_52, 52, KEYS["rtc_batt_voltage"])
 
         # ALFA
         bits = self._u16_from(inp_alfa_bits, KEYS["alfa_connected_bits"], KEYS["alfa_connected_bits"])

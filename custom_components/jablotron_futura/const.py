@@ -18,7 +18,7 @@ PLATFORMS = [
 # Register map (addresses) derived from your YAML
 # Input registers (read-only)
 INP_START_MAIN = 14
-INP_LEN_MAIN = 31   # 14..44
+INP_LEN_MAIN = 37   # 14..52
 INP_START_ALFA = 160
 
 # Holding registers (read/write)
@@ -49,6 +49,11 @@ KEYS = {
     "heat_recovering": 42,      # uint16 (W)
     "heating_power": 43,        # uint16 (W)
     "air_flow": 44,             # uint16 (m3/h)
+    "fan_power_supply": 45,     # uint16 (W)
+    "fan_power_exhaust": 46,    # uint16 (W)
+    "fan_rpm_supply": 47,       # uint16 (rpm)
+    "fan_rpm_exhaust": 48,      # uint16 (rpm)
+    "rtc_batt_voltage": 52,     # uint16 (mV)
 
     # ALFA controllers
     "alfa_connected_bits": 75,  # uint16 bitfield

@@ -82,6 +82,8 @@ views:
             label: Systém
           - entity: binary_sensor.jablotron_futura_antiradon_active
             name: Protiradon – aktivní
+          - entity: sensor.jablotron_futura_napeti_baterie_rtc
+            name: Napětí baterie RTC
       - type: horizontal-stack
         cards:
           - type: entities
@@ -174,6 +176,24 @@ views:
         title: Futura W
         hours_to_show: 168
         refresh_interval: 0
+      - type: history-graph
+        title: Výkon ventilátorů (24 h)
+        hours_to_show: 24
+        refresh_interval: 0
+        entities:
+          - entity: sensor.jablotron_futura_vykon_ventilatoru_privod
+            name: Přívod
+          - entity: sensor.jablotron_futura_vykon_ventilatoru_odtah
+            name: Odtah
+      - type: history-graph
+        title: Otáčky ventilátorů (24 h)
+        hours_to_show: 24
+        refresh_interval: 0
+        entities:
+          - entity: sensor.jablotron_futura_otacky_ventilatoru_privod
+            name: Přívod
+          - entity: sensor.jablotron_futura_otacky_ventilatoru_odtah
+            name: Odtah
       - type: history-graph
         title: Teploty (24 h)
         hours_to_show: 24
