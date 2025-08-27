@@ -7,6 +7,7 @@ from typing import Any, Dict
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
+from homeassistant.util import dt as ha_dt
 
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
@@ -201,7 +202,10 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
         for which in ("away_begin_ts","away_end_ts"):
             ts = int(data.get(which, 0) or 0)
-            data[which.replace("_ts","_text")] = "Nenastaveno" if ts == 0 else dt.datetime.utcfromtimestamp(ts).strftime("%Y-%m-%d %H:%M")
+            data[which.replace("_ts", "_text")] = (
+                "Nenastaveno" if ts == 0
+                else ha_dt.as_local(ha_dt.utc_from_timestamp(ts)).strftime("%Y-%m-%d %H:%M")
+            )
 
         return data
 
