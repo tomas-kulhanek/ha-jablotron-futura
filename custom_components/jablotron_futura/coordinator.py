@@ -149,7 +149,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["filter_wear"]      = self._u16_from(inp_40_41, 40, KEYS["filter_wear"])
         data["power"]            = self._u16_from(inp_40_41, 40, KEYS["power"])
         data["heat_recovering"]  = self._u16_from(inp_42, 42, KEYS["heat_recovering"])
-        data["heating_power"]    = self._u16_from(inp_43, 43, KEYS["heat_recovering"])
+        data["heating_power"]    = self._u16_from(inp_43, 43, KEYS["heating_power"])
         data["air_flow"]         = self._u16_from(inp_44,    44, KEYS["air_flow"])
 
         # ALFA
