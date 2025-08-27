@@ -170,7 +170,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
             data[f"alfa_co2_{i}"] = self._u16_from(block, base, base + 2)
             data[f"alfa_temp_{i}"] = self._i16_from(block, base, base + 3) / 10.0
             data[f"alfa_humi_{i}"] = self._u16_from(block, base, base + 4) / 10.0
-            data[f"alfa_ntc_temp_{i}"] = self._i16_from(block, base, base + 5) / 10.0
+            data[f"alfa_ntc_temp_{i}"] = self._u16_from(block, base, base + 5) / 10.0
 
         # Holding area
         for k in (
@@ -183,8 +183,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["away_begin_ts"] = self._u32_from(hold_main, 0, KEYS["away_begin_ts"])
         data["away_end_ts"]   = self._u32_from(hold_main, 0, KEYS["away_end_ts"])
 
-        data["temp_set_raw"] = self._i16_from(hold_main, 0, KEYS["temp_set_raw"]) / 10.0
-        data["humi_set_raw"] = self._i16_from(hold_main, 0, KEYS["humi_set_raw"]) / 10.0
+        data["temp_set_raw"] = self._u16_from(hold_main, 0, KEYS["temp_set_raw"]) / 10.0
+        data["humi_set_raw"] = self._u16_from(hold_main, 0, KEYS["humi_set_raw"]) / 10.0
 
         # Derived helpers
         v = data.get("mode_raw", 0)
