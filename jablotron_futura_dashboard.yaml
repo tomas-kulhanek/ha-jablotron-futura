@@ -5,6 +5,27 @@ views:
     icon: mdi:home-fan
     badges: []
     cards:
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: sensor.jablotron_futura_alfa_co2
+            name: ALFA 1 – CO₂
+            min: 400
+            max: 2000
+            severity:
+              green: 0
+              yellow: 1000
+              red: 1500
+          - type: entities
+            title: ALFA 1
+            show_header_toggle: false
+            entities:
+              - entity: sensor.jablotron_futura_alfa_teplota
+                name: Teplota
+              - entity: sensor.jablotron_futura_alfa_vlhkost
+                name: Vlhkost
+              - entity: sensor.jablotron_futura_alfa_co2
+                name: CO₂
       - type: entity-filter
         title: Aktivní chyby
         show_empty: false
@@ -159,15 +180,6 @@ views:
             name: Vzduch (m³/h)
           - entity: sensor.jablotron_futura_zaneseni_filtru
             name: Filtry (%)
-      - type: gauge
-        name: CO₂ (ppm)
-        entity: sensor.jablotron_futura_alfa_co2
-        min: 400
-        max: 3000
-        severity:
-          green: 0
-          yellow: 1000
-          red: 1500
       - type: history-graph
         entities:
           - entity: sensor.jablotron_futura_prikon

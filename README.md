@@ -47,3 +47,31 @@ If you prefer YAML configuration, you can still use the `jablotron_futura.yaml` 
 - You can customize the dashboard to fit your needs, but the provided one should give you a good starting point.
 - Example dashboard [YAML](jablotron_futura_dashboard.yaml) is available in the `jablotron_futura_dashboard.yaml` file in the repository.
 ![Example Dashboard](docs/dashboard.png)
+
+
+### More alfas
+If you have more than 1 ALFA controllers, you can add into [YAML](jablotron_futura_dashboard.yaml)
+
+```yaml
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: sensor.jablotron_futura_alfa_co2
+            name: ALFA 1 – CO₂
+            min: 400
+            max: 2000
+            severity:
+              green: 0
+              yellow: 1000
+              red: 1500
+          - type: entities
+            title: ALFA 1
+            show_header_toggle: false
+            entities:
+              - entity: sensor.jablotron_futura_alfa_teplota
+                name: Teplota
+              - entity: sensor.jablotron_futura_alfa_vlhkost
+                name: Vlhkost
+              - entity: sensor.jablotron_futura_alfa_co2
+                name: CO₂
+```
