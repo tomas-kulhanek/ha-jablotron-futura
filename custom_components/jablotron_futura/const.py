@@ -19,8 +19,7 @@ PLATFORMS = [
 # Input registers (read-only)
 INP_START_MAIN = 14
 INP_LEN_MAIN = 31   # 14..44
-INP_START_ALFA = 162
-INP_LEN_ALFA = 3    # 162..164
+INP_START_ALFA = 160
 
 # Holding registers (read/write)
 HOLD_START_MAIN = 0
@@ -51,10 +50,8 @@ KEYS = {
     "heating_power": 43,        # uint16 (W)
     "air_flow": 44,             # uint16 (m3/h)
 
-    # ALFA 162..164
-    "alfa_co2_1": 162,          # uint16 ppm
-    "alfa_temp_1": 163,         # int16 x0.1
-    "alfa_humi_1": 164,         # uint16 x0.1
+    # ALFA controllers
+    "alfa_connected_bits": 75,  # uint16 bitfield
 
     # Holding 0..17
     "mode_raw": 0,              # uint16 (0..6)
@@ -74,6 +71,15 @@ KEYS = {
     "cooling_enable_raw": 16,   # 0/1
     "comfort_enable_raw": 17,   # 0/1
 }
+
+for i in range(1, 9):
+    base = 160 + (i - 1) * 10
+    KEYS[f"alfa_mb_address_{i}"] = base       # uint16
+    KEYS[f"alfa_options_{i}"] = base + 1      # uint16 bit flags
+    KEYS[f"alfa_co2_{i}"] = base + 2          # uint16 ppm
+    KEYS[f"alfa_temp_{i}"] = base + 3         # int16 x0.1 °C
+    KEYS[f"alfa_humi_{i}"] = base + 4         # uint16 x0.1 %
+    KEYS[f"alfa_ntc_temp_{i}"] = base + 5     # int16 x0.1 °C
 
 VENT_MODE_MAP = {
     "Vypnuto": 0,

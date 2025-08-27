@@ -11,7 +11,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
 
-from .const import DOMAIN, CONF_UNIT_ID, DEFAULT_UNIT_ID, KEYS
+from .const import DOMAIN, CONF_UNIT_ID, DEFAULT_UNIT_ID, KEYS, INP_START_ALFA
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -40,14 +40,27 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         if self.client is None:
             # timeout stejně jako v původním YAML (5 s)
             self.client = AsyncModbusTcpClient(self.host, port=self.port, timeout=5)
-            ok = await self.client.connect()
-            if not ok or not getattr(self.client, "connected", False):
+
+        if not getattr(self.client, "connected", False):
+            try:
+                await self.client.connect()
+            except Exception as e:
+                try:
+                    await self.client.close()
+                except Exception:
+                    pass
+                self.client = None
+                raise UpdateFailed(
+                    f"TCP connect failed to {self.host}:{self.port}"
+                ) from e
+            if not getattr(self.client, "connected", False):
                 try:
                     await self.client.close()
                 except Exception:
                     pass
                 self.client = None
                 raise UpdateFailed(f"TCP connect failed to {self.host}:{self.port}")
+
         return self.client
 
     async def async_close(self) -> None:
@@ -66,6 +79,11 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
             else:
                 rr = await client.read_holding_registers(start, count=count, slave=self.unit)
         except ModbusException as e:
+            try:
+                await client.close()
+            except Exception:
+                pass
+            self.client = None
             raise UpdateFailed(f"Modbus read failed @ {start}/{count}: {e}") from e
         if rr.isError():
             raise UpdateFailed(f"Modbus error @ {start}/{count}: {rr}")
@@ -101,7 +119,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         inp_42    = await self._read_block(42, 1, input_regs=True)   # 42 (zpětně získávané teplo)
         inp_43    = await self._read_block(43, 1, input_regs=True)  # 43 (výkon topení dohřevu)
         inp_44    = await self._read_block(44, 1, input_regs=True)   # 44 (průtok)
-        inp_alfa  = await self._read_block(162, 3, input_regs=True)  # ALFA 162..164
+        inp_alfa_bits = await self._read_block(KEYS["alfa_connected_bits"], 1, input_regs=True)  # 75 (bitfield)
 
         # Holding area (0..17 je u Futury souvislý rozsah)
         hold_main = await self._read_block(0, 18, input_regs=False)
@@ -135,9 +153,23 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["air_flow"]         = self._u16_from(inp_44,    44, KEYS["air_flow"])
 
         # ALFA
-        data["alfa_co2_1"]       = self._u16_from(inp_alfa, 162, KEYS["alfa_co2_1"])
-        data["alfa_temp_1"]      = self._i16_from(inp_alfa, 162, KEYS["alfa_temp_1"]) / 10.0
-        data["alfa_humi_1"]      = self._u16_from(inp_alfa, 162, KEYS["alfa_humi_1"]) / 10.0
+        bits = self._u16_from(inp_alfa_bits, KEYS["alfa_connected_bits"], KEYS["alfa_connected_bits"])
+        data["alfa_connected_bits"] = bits
+        data["alfa_count"] = bits.bit_count()
+        for i in range(1, 9):
+            if not (bits & (1 << (i - 1))):
+                continue
+            base = INP_START_ALFA + (i - 1) * 10
+            # Each ALFA occupies the first six registers of its 10-register slot
+            # (160..165, 170..175, ...). Reading beyond 6 registers may trigger
+            # ILLEGAL DATA ADDRESS errors, so limit the range.
+            block = await self._read_block(base, 6, input_regs=True)
+            data[f"alfa_mb_address_{i}"] = self._u16_from(block, base, base)
+            data[f"alfa_options_{i}"] = self._u16_from(block, base, base + 1)
+            data[f"alfa_co2_{i}"] = self._u16_from(block, base, base + 2)
+            data[f"alfa_temp_{i}"] = self._i16_from(block, base, base + 3) / 10.0
+            data[f"alfa_humi_{i}"] = self._u16_from(block, base, base + 4) / 10.0
+            data[f"alfa_ntc_temp_{i}"] = self._i16_from(block, base, base + 5) / 10.0
 
         # Holding area
         for k in (
@@ -175,7 +207,15 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
     async def _write_u16(self, address: int, value: int) -> None:
         client = await self._ensure_client()
-        rr = await client.write_register(address, value=value, slave=self.unit)
+        try:
+            rr = await client.write_register(address, value=value, slave=self.unit)
+        except ModbusException as e:
+            try:
+                await client.close()
+            except Exception:
+                pass
+            self.client = None
+            raise UpdateFailed(f"Write failed @ {address}: {e}") from e
         if rr.isError():
             raise UpdateFailed(f"Write failed @ {address}: {rr}")
 
@@ -184,7 +224,15 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         client = await self._ensure_client()
         hi = (value >> 16) & 0xFFFF
         lo = value & 0xFFFF
-        rr = await client.write_registers(address, values=[hi, lo], slave=self.unit)
+        try:
+            rr = await client.write_registers(address, values=[hi, lo], slave=self.unit)
+        except ModbusException as e:
+            try:
+                await client.close()
+            except Exception:
+                pass
+            self.client = None
+            raise UpdateFailed(f"Write failed @ {address} (u32): {e}") from e
         if rr.isError():
             raise UpdateFailed(f"Write failed @ {address} (u32): {rr}")
 

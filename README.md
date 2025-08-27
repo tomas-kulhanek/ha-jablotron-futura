@@ -18,7 +18,7 @@ If you prefer YAML configuration, you can still use the `jablotron_futura.yaml` 
 
 ## Entities
 
-- Sensors for temperatures, humidity, power, airflow, setpoints, timers, ALFA values.
+- Sensors for temperatures, humidity, power, airflow, setpoints, timers, and ALFA controllers (address/settings/CO₂/temperature/humi/NTC temperature for up to 8 units + total count).
 - Binary sensors for error bits (0–12) and warning bits (0–31), plus antiradon active.
 - Switches: time program, bypass, heating, cooling, comfort.
 - Selects: vent mode (Vypnuto/1–5/Auto), humidity mode (Suché/Komfortní/Vlhké).

@@ -1,7 +1,17 @@
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
-from homeassistant.const import UnitOfTemperature, PERCENTAGE, UnitOfPower, CONCENTRATION_PARTS_PER_MILLION, UnitOfVolumeFlowRate
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorDeviceClass,
+    SensorStateClass,
+)
+from homeassistant.const import (
+    UnitOfTemperature,
+    PERCENTAGE,
+    UnitOfPower,
+    CONCENTRATION_PARTS_PER_MILLION,
+    UnitOfVolumeFlowRate,
+)
 
 from .entity import FuturaEntity
 from .coordinator import FuturaCoordinator
@@ -38,12 +48,22 @@ async def async_setup_entry(hass, entry, async_add_entities):
     ents.append(FuturaSimpleSensor(coord, "temp_outdoor_ntc", "Teplota NTC venku", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
 
     # Humidity
-    for k, n in (("humi_outdoor","Vlhkost venku"),("humi_supply","Vlhkost do domu"),("humi_extract","Vlhkost z domu"),("humi_exhaust","Vlhkost odtah"),("alfa_humi_1","ALFA – vlhkost")):
+    for k, n in (("humi_outdoor","Vlhkost venku"),("humi_supply","Vlhkost do domu"),("humi_extract","Vlhkost z domu"),("humi_exhaust","Vlhkost odtah")):
         ents.append(FuturaSimpleSensor(coord, k, n, PERCENTAGE, SensorDeviceClass.HUMIDITY))
 
-    # ALFA
-    ents.append(FuturaSimpleSensor(coord, "alfa_temp_1", "ALFA – teplota", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
-    ents.append(FuturaSimpleSensor(coord, "alfa_co2_1", "ALFA – CO₂", CONCENTRATION_PARTS_PER_MILLION))
+    # ALFA controllers
+    ents.append(FuturaSimpleSensor(coord, "alfa_count", "ALFA – počet"))
+    bits = int(coord.data.get("alfa_connected_bits", 0))
+    for i in range(1, 9):
+        if not (bits & (1 << (i - 1))):
+            continue
+        prefix = f"ALFA {i}"
+        ents.append(FuturaSimpleSensor(coord, f"alfa_mb_address_{i}", f"{prefix} – adresa"))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_options_{i}", f"{prefix} – nastavení"))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_temp_{i}", f"{prefix} – teplota", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_ntc_temp_{i}", f"{prefix} – teplota NTC", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_humi_{i}", f"{prefix} – vlhkost", PERCENTAGE, SensorDeviceClass.HUMIDITY))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_co2_{i}", f"{prefix} – CO₂", CONCENTRATION_PARTS_PER_MILLION))
 
     # Performance
     ents.append(FuturaSimpleSensor(coord, "filter_wear", "Zanesení filtrů", PERCENTAGE))
