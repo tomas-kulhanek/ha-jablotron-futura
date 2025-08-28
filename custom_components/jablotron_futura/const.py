@@ -29,6 +29,7 @@ HOLD_LEN_MAIN = 18  # 0..17
 KEYS = {
     # Input area (14..44)
     "variant_raw": 14,
+    "fut_config_raw": 15,       # uint16 bitfield with feature availability
     "modes_bits_raw": 16,       # uint32
     "errors_bits_raw": 18,      # uint32
     "warnings_bits_raw": 20,    # uint32

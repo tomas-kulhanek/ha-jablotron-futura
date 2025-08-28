@@ -19,9 +19,20 @@ from .coordinator import FuturaCoordinator
 
 
 class FuturaSimpleSensor(FuturaEntity, SensorEntity):
-    def __init__(self, coordinator: FuturaCoordinator, key: str, name: str, unit: str | None = None, device_class=None, icon: str | None = None, state_class=None):
+    def __init__(
+        self,
+        coordinator: FuturaCoordinator,
+        key: str,
+        name: str,
+        unit: str | None = None,
+        device_class=None,
+        icon: str | None = None,
+        state_class=None,
+        avail_key: str | None = None,
+    ):
         super().__init__(coordinator, name, key)
         self.key = key
+        self.avail_key = avail_key
         if unit is not None:
             self._attr_native_unit_of_measurement = unit
         if device_class is not None:
@@ -34,6 +45,12 @@ class FuturaSimpleSensor(FuturaEntity, SensorEntity):
     @property
     def native_value(self):
         return self.coordinator.data.get(self.key)
+
+    @property
+    def available(self) -> bool:
+        if self.avail_key is None:
+            return True
+        return bool(self.coordinator.data.get(self.avail_key, False))
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
@@ -54,17 +71,15 @@ async def async_setup_entry(hass, entry, async_add_entities):
 
     # ALFA controllers
     ents.append(FuturaSimpleSensor(coord, "alfa_count", "ALFA – počet"))
-    bits = int(coord.data.get("alfa_connected_bits", 0))
     for i in range(1, 9):
-        if not (bits & (1 << (i - 1))):
-            continue
         prefix = f"ALFA {i}"
-        ents.append(FuturaSimpleSensor(coord, f"alfa_mb_address_{i}", f"{prefix} – adresa"))
-        ents.append(FuturaSimpleSensor(coord, f"alfa_options_{i}", f"{prefix} – nastavení"))
-        ents.append(FuturaSimpleSensor(coord, f"alfa_temp_{i}", f"{prefix} – teplota", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
-        ents.append(FuturaSimpleSensor(coord, f"alfa_ntc_temp_{i}", f"{prefix} – teplota NTC", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE))
-        ents.append(FuturaSimpleSensor(coord, f"alfa_humi_{i}", f"{prefix} – vlhkost", PERCENTAGE, SensorDeviceClass.HUMIDITY))
-        ents.append(FuturaSimpleSensor(coord, f"alfa_co2_{i}", f"{prefix} – CO₂", CONCENTRATION_PARTS_PER_MILLION))
+        avail = f"alfa_{i}_available"
+        ents.append(FuturaSimpleSensor(coord, f"alfa_mb_address_{i}", f"{prefix} – adresa", avail_key=avail))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_options_{i}", f"{prefix} – nastavení", avail_key=avail))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_temp_{i}", f"{prefix} – teplota", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE, avail_key=avail))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_ntc_temp_{i}", f"{prefix} – teplota NTC", UnitOfTemperature.CELSIUS, SensorDeviceClass.TEMPERATURE, avail_key=avail))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_humi_{i}", f"{prefix} – vlhkost", PERCENTAGE, SensorDeviceClass.HUMIDITY, avail_key=avail))
+        ents.append(FuturaSimpleSensor(coord, f"alfa_co2_{i}", f"{prefix} – CO₂", CONCENTRATION_PARTS_PER_MILLION, avail_key=avail))
 
     # Performance
     ents.append(FuturaSimpleSensor(coord, "filter_wear", "Zanesení filtrů", PERCENTAGE))

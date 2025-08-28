@@ -127,9 +127,20 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
         # Input area – bity a variant
         data["variant_raw"]      = self._u16_from(inp_14_21, 14, KEYS["variant_raw"])
+        data["fut_config_raw"]   = self._u16_from(inp_14_21, 14, KEYS["fut_config_raw"])
         data["modes_bits_raw"]   = self._u32_from(inp_14_21, 14, KEYS["modes_bits_raw"])
         data["errors_bits_raw"]  = self._u32_from(inp_14_21, 14, KEYS["errors_bits_raw"])
         data["warnings_bits_raw"]= self._u32_from(inp_14_21, 14, KEYS["warnings_bits_raw"])
+
+        # Feature availability derived from fut_config
+        fc = data["fut_config_raw"]
+        data["has_internal_heater"] = bool(fc & 0x1)
+        data["has_coolbreeze_cooling"] = bool(fc & 0x2)
+        data["has_coolbreeze_heating"] = bool(fc & 0x4)
+        data["has_bypass"] = bool(fc & 0x8)
+        data["heating_available"] = data["has_internal_heater"] or data["has_coolbreeze_heating"]
+        data["cooling_available"] = data["has_coolbreeze_cooling"]
+        data["bypass_available"] = data["has_bypass"]
 
         # Teploty
         data["temp_outdoor"]     = self._i16_from(inp_30_33, 30, KEYS["temp_outdoor"]) / 10.0
@@ -157,11 +168,15 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["rtc_batt_voltage"] = self._u16_from(inp_52, 52, KEYS["rtc_batt_voltage"])
 
         # ALFA
-        bits = self._u16_from(inp_alfa_bits, KEYS["alfa_connected_bits"], KEYS["alfa_connected_bits"])
+        bits = self._u16_from(
+            inp_alfa_bits, KEYS["alfa_connected_bits"], KEYS["alfa_connected_bits"]
+        )
         data["alfa_connected_bits"] = bits
         data["alfa_count"] = bits.bit_count()
         for i in range(1, 9):
-            if not (bits & (1 << (i - 1))):
+            connected = bool(bits & (1 << (i - 1)))
+            data[f"alfa_{i}_available"] = connected
+            if not connected:
                 continue
             base = INP_START_ALFA + (i - 1) * 10
             # Each ALFA occupies the first six registers of its 10-register slot
