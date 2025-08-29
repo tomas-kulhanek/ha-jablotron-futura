@@ -12,7 +12,7 @@ from homeassistant.util import dt as ha_dt
 from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
 
-from .const import DOMAIN, CONF_UNIT_ID, DEFAULT_UNIT_ID, KEYS, INP_START_ALFA
+from .const import CONF_UNIT_ID, DEFAULT_UNIT_ID, KEYS, INP_START_ALFA
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -113,24 +113,26 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         Čteme po segmentech, protože velký rozsah 14..44 vrací ILLEGAL DATA ADDRESS.
         """
         # Input segments
-        inp_14_21 = await self._read_block(14, 8, input_regs=True)   # 14..21 (variant + bity 16..21)
+        inp_14_25 = await self._read_block(14, 12, input_regs=True)  # 14..25 (variant, bity, config)
         inp_30_33 = await self._read_block(30, 4, input_regs=True)   # 30..33 (teploty)
         inp_34_38 = await self._read_block(34, 5, input_regs=True)   # 34..38 (vlhkosti + NTC)
         inp_40_48 = await self._read_block(40, 9, input_regs=True)   # 40..48 (filtr, příkon, zpětně získávané teplo, výkon topení dohřevu, průtok, ventilátory)
         inp_52 = await self._read_block(52, 1, input_regs=True)      # 52 baterie RTC
         inp_alfa_bits = await self._read_block(KEYS["alfa_connected_bits"], 1, input_regs=True)  # 75 (bitfield)
+        inp_vzv_identity = await self._read_block(KEYS["vzv_identity_raw"], 1, input_regs=True)
 
-        # Holding area (0..17 je u Futury souvislý rozsah)
-        hold_main = await self._read_block(0, 18, input_regs=False)
+        # Holding area (0..19 je u Futury souvislý rozsah)
+        hold_main = await self._read_block(0, 20, input_regs=False)
 
         data: Dict[str, Any] = {}
 
         # Input area – bity a variant
-        data["variant_raw"]      = self._u16_from(inp_14_21, 14, KEYS["variant_raw"])
-        data["fut_config_raw"]   = self._u16_from(inp_14_21, 14, KEYS["fut_config_raw"])
-        data["modes_bits_raw"]   = self._u32_from(inp_14_21, 14, KEYS["modes_bits_raw"])
-        data["errors_bits_raw"]  = self._u32_from(inp_14_21, 14, KEYS["errors_bits_raw"])
-        data["warnings_bits_raw"]= self._u32_from(inp_14_21, 14, KEYS["warnings_bits_raw"])
+        data["variant_raw"]      = self._u16_from(inp_14_25, 14, KEYS["variant_raw"])
+        data["fut_config_raw"]   = self._u16_from(inp_14_25, 14, KEYS["fut_config_raw"])
+        data["modes_bits_raw"]   = self._u32_from(inp_14_25, 14, KEYS["modes_bits_raw"])
+        data["errors_bits_raw"]  = self._u32_from(inp_14_25, 14, KEYS["errors_bits_raw"])
+        data["warnings_bits_raw"]= self._u32_from(inp_14_25, 14, KEYS["warnings_bits_raw"])
+        data["config_bits_raw"]  = self._u16_from(inp_14_25, 14, KEYS["config_bits_raw"])
 
         # Feature availability derived from fut_config
         fc = data["fut_config_raw"]
@@ -166,6 +168,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["fan_rpm_supply"]   = self._u16_from(inp_40_48, 40, KEYS["fan_rpm_supply"])
         data["fan_rpm_exhaust"]  = self._u16_from(inp_40_48, 40, KEYS["fan_rpm_exhaust"])
         data["rtc_batt_voltage"] = self._u16_from(inp_52, 52, KEYS["rtc_batt_voltage"])
+        data["vzv_identity_raw"] = self._u16_from(inp_vzv_identity, KEYS["vzv_identity_raw"], KEYS["vzv_identity_raw"])
 
         # ALFA
         bits = self._u16_from(
@@ -195,6 +198,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
             "mode_raw","boost_remaining_s","circulation_remaining_s","overpressure_remaining_s",
             "night_remaining_s","party_remaining_s","time_program_raw","antiradon_raw",
             "bypass_enable_raw","heating_enable_raw","cooling_enable_raw","comfort_enable_raw",
+            "flap_supply_raw","flap_extract_raw",
         ):
             data[k] = self._u16_from(hold_main, 0, KEYS[k])
 
@@ -203,6 +207,10 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
         data["temp_set_raw"] = self._u16_from(hold_main, 0, KEYS["temp_set_raw"]) / 10.0
         data["humi_set_raw"] = self._u16_from(hold_main, 0, KEYS["humi_set_raw"]) / 10.0
+
+        cbits = int(data.get("config_bits_raw", 0) or 0)
+        data["has_vario_breeze"] = bool(cbits & (1 << 1))
+        data["flaps_present"] = bool(int(data.get("vzv_identity_raw", 0) or 0))
 
         # Derived helpers
         v = data.get("mode_raw", 0)
