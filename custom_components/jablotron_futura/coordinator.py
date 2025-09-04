@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 import logging
+import inspect
 from typing import Any, Dict
 
 from homeassistant.const import CONF_HOST, CONF_PORT
@@ -36,6 +37,7 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         self.unit = cfg.get(CONF_UNIT_ID, DEFAULT_UNIT_ID)
 
         self.client: AsyncModbusTcpClient | None = None
+        self._device_kwarg = "device_id" if "device_id" in inspect.signature(AsyncModbusTcpClient.read_input_registers).parameters else "slave"
 
     async def _ensure_client(self) -> AsyncModbusTcpClient:
         if self.client is None:
@@ -75,10 +77,11 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     async def _read_block(self, start: int, count: int, *, input_regs: bool) -> list[int]:
         client = await self._ensure_client()
         try:
+            kwargs = {"count": count, self._device_kwarg: self.unit}
             if input_regs:
-                rr = await client.read_input_registers(start, count=count, slave=self.unit)
+                rr = await client.read_input_registers(start, **kwargs)
             else:
-                rr = await client.read_holding_registers(start, count=count, slave=self.unit)
+                rr = await client.read_holding_registers(start, **kwargs)
         except ModbusException as e:
             try:
                 await client.close()
@@ -230,7 +233,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
     async def _write_u16(self, address: int, value: int) -> None:
         client = await self._ensure_client()
         try:
-            rr = await client.write_register(address, value=value, slave=self.unit)
+            kwargs = {self._device_kwarg: self.unit}
+            rr = await client.write_register(address, value=value, **kwargs)
         except ModbusException as e:
             try:
                 await client.close()
@@ -247,7 +251,8 @@ class FuturaCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         hi = (value >> 16) & 0xFFFF
         lo = value & 0xFFFF
         try:
-            rr = await client.write_registers(address, values=[hi, lo], slave=self.unit)
+            kwargs = {self._device_kwarg: self.unit}
+            rr = await client.write_registers(address, values=[hi, lo], **kwargs)
         except ModbusException as e:
             try:
                 await client.close()
