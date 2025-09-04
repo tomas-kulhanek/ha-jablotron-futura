@@ -13,6 +13,7 @@ PLATFORMS = [
     "select",
     "number",
     "button",
+    "cover",
 ]
 
 # Register map (addresses) derived from your YAML
@@ -23,7 +24,7 @@ INP_START_ALFA = 160
 
 # Holding registers (read/write)
 HOLD_START_MAIN = 0
-HOLD_LEN_MAIN = 18  # 0..17
+HOLD_LEN_MAIN = 20  # 0..19
 
 # Keys we expose in coordinator.data
 KEYS = {
@@ -33,6 +34,7 @@ KEYS = {
     "modes_bits_raw": 16,       # uint32
     "errors_bits_raw": 18,      # uint32
     "warnings_bits_raw": 20,    # uint32
+    "config_bits_raw": 24,      # uint16 features
 
     "temp_outdoor": 30,         # int16, x0.1
     "temp_supply": 31,          # int16, x0.1
@@ -58,8 +60,9 @@ KEYS = {
 
     # ALFA controllers
     "alfa_connected_bits": 75,  # uint16 bitfield
+    "vzv_identity_raw": 80,     # uint16 bitfield
 
-    # Holding 0..17
+    # Holding 0..19
     "mode_raw": 0,              # uint16 (0..6)
     "boost_remaining_s": 1,     # uint16 seconds
     "circulation_remaining_s": 2,# uint16 seconds
@@ -76,6 +79,8 @@ KEYS = {
     "heating_enable_raw": 15,   # 0/1
     "cooling_enable_raw": 16,   # 0/1
     "comfort_enable_raw": 17,   # 0/1
+    "flap_supply_raw": 18,      # 0/1
+    "flap_extract_raw": 19,     # 0/1
 }
 
 for i in range(1, 9):
